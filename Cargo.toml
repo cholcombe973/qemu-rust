@@ -1,0 +1,10 @@
+[package]
+name = "qemu-rust-generator"
+version = "0.1.0"
+authors = ["Chris Holcombe <xfactor973@gmail.com>"]
+
+[dependencies]
+hyper = "*"
+log = "*"
+nom = "*"
+simple_logger = "*"
