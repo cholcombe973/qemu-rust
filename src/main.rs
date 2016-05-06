@@ -63,19 +63,49 @@ fn test_comment_parsing(){
     println!("test_comment_parsing Result: {:?}", result);
 }
 
+named!(gen<bool>,
+    chain!(
+        tag!("'gen':") ~
+        blanks~
+        gen: alt!(
+            map_res!(tag!("false"), from_utf8) |
+            map_res!(tag!("true"), from_utf8)),
+        ||{
+            if gen == "false"{
+                false
+            }else{
+                true
+            }
+        }
+    )
+);
+
 //'returns': [ 'ObjectPropertyInfo' ]
 //'returns': 'VncInfo'
-named!(parse_return_type<&[u8], String>,
+named!(parse_return_list<String>,
     chain!(
         tag!("'returns':")~
         blanks~
-        return_type: alt!(
-            unsplit_list |
-            quoted_string
-        )~
+        tag!("[") ~
+        blanks~
+        return_type: quoted_string ~
+        blanks ~
+        tag!("]") ~
         blanks?,
         ||{
-            return_type.replace(" ", "").to_string()
+            return_type
+        }
+    )
+);
+
+named!(parse_return_string<String>,
+    chain!(
+        tag!("'returns':")~
+        blanks~
+        return_type: quoted_string ~
+        blanks?,
+        ||{
+            return_type
         }
     )
 );
@@ -86,45 +116,54 @@ fn test_returns_parser(){
 
     //TODO: How do I return both a List and a Struct
     let input = "'returns': [ 'ObjectPropertyInfo' ]";
-    let result = parse_return_type(input.as_bytes());
+    let result = parse_return_list(input.as_bytes());
     println!("test_returns Result: {:?}", result);
     assert_eq!(
         nom::IResult::Done(x,
-            "'ObjectPropertyInfo'".to_string()),
+            "ObjectPropertyInfo".to_string()),
             result);
 
     //Slightly different format
     let input2 = "'returns': ['MouseInfo']";
-    let result2 = parse_return_type(input2.as_bytes());
+    let result2 = parse_return_list(input2.as_bytes());
     println!("test_returns Result: {:?}", result2);
     assert_eq!(
         nom::IResult::Done(x,
-            "'MouseInfo'".to_string()),
+            "MouseInfo".to_string()),
             result2);
 }
 
-named!(quoted_string<&[u8], &str>,
-    map_res!(
-        chain!(
-            tag!("'") ~
-            s: take_until!("'") ~
-            tag!("'") ,
-            ||{
-                s
-            }
-        ),
-    from_utf8)
+named!(quoted_string<&[u8], String>,
+    chain!(
+        tag!("'") ~
+        s: map_res!(take_until!("'"), from_utf8) ~
+        tag!("'") ,
+        ||{
+            s.to_string()
+        }
+    )
 );
 
-named!(unsplit_list<&[u8], &str>,
-    map_res!(chain!(
+named!(quoted_string_vec<&[u8], Vec<String> >,
+    chain!(
+        tag!("'") ~
+        s: map_res!(take_until!("'"), from_utf8) ~
+        tag!("'") ,
+        ||{
+            vec![s.to_string()]
+        }
+    )
+);
+
+named!(unsplit_list<&[u8], String>,
+    chain!(
         tag!("[") ~
-        values: take_until!("]") ~
+        values: map_res!(take_until!("]"), from_utf8) ~
         tag!("]") ,
         ||{
-            values
+            values.to_string()
         }
-    ),from_utf8)
+    )
 );
 
 named!(unsplit_field_list<&[u8], &str>,
@@ -194,13 +233,25 @@ named!(base<&[u8], Vec<String> >,
     chain!(
         tag!("'base':") ~
         blanks? ~
-        fields: alt(
-            data_field_list |
-            quoted_string) ~
+        fields: alt!(
+            dbg!(data_field_list) |
+            dbg!(quoted_string_vec))~
         tag!(",")~
         blanks?,
         ||{
             fields
+        }
+    )
+);
+
+named!(data<Vec<String> >,
+    chain!(
+        dbg!(tag!("'data': ")) ~
+        data: dbg!(data_field_list)~
+        dbg!(tag!(","))~
+        dbg!(blanks)?,
+        ||{
+            data
         }
     )
 );
@@ -223,10 +274,15 @@ fn test_enum_list(){
     let input = "['discard', 'delay', 'merge', 'slew' ]";
     let result = enum_list(input.as_bytes());
     println!("test_enum_list Result: {:?}", result);
-    assert_eq!(nom::IResult::Done(x, vec!["discard".to_string(), "delay".to_string(), "merge".to_string(), "slew".to_string()]), result);
+    assert_eq!(nom::IResult::Done(x,
+        vec![
+            "discard".to_string(),
+            "delay".to_string(),
+            "merge".to_string(),
+            "slew".to_string()]), result);
 }
 
-named!(field_pair<&[u8], (&str, &str) >,
+named!(field_pair<&[u8], (String, String) >,
     chain!(
         name: quoted_string ~
         tag!(": ") ~
@@ -280,21 +336,48 @@ struct Struct{
 impl Struct{
     fn parse(input: & [u8], name: String) -> nom::IResult<&[u8], Self> {
         println!("Input to Struct: {:?}", String::from_utf8_lossy(input));
-        chain!(
-            input,
-            base: dbg!(base) ? ~
-            dbg!(tag!("'data': ")) ~
-            data: dbg!(data_field_list)~
-            dbg!(tag!(","))?~
-            dbg!(blanks)?,
-            ||{
-                Struct{
-                    name: name,
-                    fields: data,
-                    base: base,
-                }
+
+        //Check if base is first. Sometimes it comes first and sometimes data comes first
+        let base_first = base(input);
+        match base_first {
+            nom::IResult::Done(remaining, base) => {
+                //println!("base first: {:?}", String::from_utf8_lossy(remaining));
+                chain!(
+                    remaining,
+                    dbg!(tag!("'data': ")) ~
+                    data: dbg!(data_field_list)~
+                    dbg!(tag!(","))?~
+                    dbg!(blanks)?,
+                    ||{
+                        Struct{
+                            name: name,
+                            fields: data,
+                            base: Some(base),
+                        }
+                    }
+                )
             }
-        )
+            nom::IResult::Incomplete(needed) => nom::IResult::Incomplete(needed),
+            nom::IResult::Error(_) => {
+                //Data is probably first
+                println!("Data first input: {:?}", String::from_utf8_lossy(input));
+                chain!(
+                    input,
+                    dbg!(tag!("'data': ")) ~
+                    data: dbg!(data_field_list)~
+                    dbg!(tag!(","))?~
+                    dbg!(blanks)?~
+                    base: dbg!(base) ? ,
+                    ||{
+                        Struct{
+                            name: name,
+                            fields: data,
+                            base: base,
+                        }
+                    }
+                )
+            }
+        }
     }
 }
 
@@ -302,7 +385,8 @@ impl Struct{
 struct Command{
     name: String,
     fields: Option<Vec<String>>,
-    returns: Option<String>, //Either a Struct or a list of Struct
+    gen: Option<bool>,
+    returns: Option<QemuReturnType>, //Either a type or a list of type
 }
 
 impl Command{
@@ -314,13 +398,24 @@ impl Command{
             data: dbg!(data_field_list)?~
             dbg!(tag!(","))?~
             dbg!(blanks)?~
-            returns: dbg!(parse_return_type)?~
+            gen: dbg!(gen) ? ~
+            returns_list: parse_return_list ? ~
+            returns_string: parse_return_string ? ~
             dbg!(blanks)?,
             ||{
+                let return_value: Option<QemuReturnType>;
+                if returns_list.is_some(){
+                    return_value = Some(QemuReturnType::List(returns_list.unwrap()));
+                }else if returns_string.is_some(){
+                    return_value = Some(QemuReturnType::String(returns_string.unwrap()));
+                }else{
+                    return_value = None;
+                }
                 Command{
                     name: name,
+                    gen: gen,
                     fields: data,
-                    returns: returns,
+                    returns: return_value,
                 }
             }
         )
@@ -385,6 +480,12 @@ impl Enum{
 }
 
 #[derive(Debug, Eq, PartialEq)]
+enum QemuReturnType{
+    List(String), //A list type
+    String(String), // Returns a single thing
+}
+
+#[derive(Debug, Eq, PartialEq)]
 enum QemuType{
     Struct(Struct),
     Command(Command),
@@ -409,7 +510,7 @@ impl QemuType {
         );
         match f{
             nom::IResult::Done(remaining, fields) => {
-                match fields.0{
+                match &fields.0[..]{
                     "struct" => {
                         match Struct::parse(remaining, fields.1.to_string()){
                             nom::IResult::Done(left, s) => {
@@ -551,6 +652,27 @@ fn test_include_section_parser(){
                     name: "qapi/common.json".to_string() } }
         ), result);
 }
+#[test]
+fn test_struct_section_parser3(){
+    let input = r#"##
+# @ChardevFile:
+#
+# Configuration info for file chardevs.
+#
+# @in:  #optional The name of the input file
+# @out: The name of the output file
+# @append: #optional Open the file in append mode (default false to
+#          truncate) (Since 2.6)
+#
+# Since: 1.4
+##
+{ 'struct': 'ChardevFile', 'data': { '*in' : 'str',
+                                   'out' : 'str',
+                                   '*append': 'bool' },
+  'base': 'ChardevCommon' }"#;
+    let result = Section::parse(input.as_bytes());
+    println!("test_section_parser3 result: {:?}", result);
+}
 
 #[test]
 fn test_struct_section_parser2(){
@@ -568,11 +690,12 @@ fn test_struct_section_parser2(){
   'data': { '*auth': 'str' } }
     "#;
     let result = Section::parse(input.as_bytes());
-    println!("test_section_parser result: {:?}", result);
+    println!("test_section_parser2 result: {:?}", result);
 }
 
 #[test]
 fn test_struct_section_parser(){
+    let x: &[u8] = &[];
     let input = r#"#
 # @MigrationParameters
 #
@@ -600,7 +723,35 @@ fn test_struct_section_parser(){
             'x-cpu-throttle-increment': 'int'} }
     "#;
     let result = Section::parse(input.as_bytes());
-    println!("test_section_parser result: {:?}", result);
+    println!("test_struct_section_parser result: {:?}", result);
+    assert_eq!(nom::IResult::Done(x,
+        Section {
+            description: vec![
+                "".to_string(),
+                " @MigrationParameters".to_string(),
+                "".to_string(),
+                " @compress-level: compression level".to_string(),
+                "".to_string(),
+                " @compress-threads: compression thread count".to_string(),
+                "".to_string(),
+                " @decompress-threads: decompression thread count".to_string(),
+                "".to_string(),
+                " @x-cpu-throttle-initial: Initial percentage of time guest cpus are throttled".to_string(),
+                "                          when migration auto-converge is activated. The".to_string(),
+                "                          default value is 20. (Since 2.5)".to_string(),
+                "".to_string(),
+                " @x-cpu-throttle-increment: throttle percentage increase each time".to_string(),
+                "                            auto-converge detects that migration is not making".to_string(),
+                "                            progress. The default value is 10. (Since 2.5)".to_string(),
+                "".to_string(),
+                " Since: 2.4".to_string(),
+                "#".to_string()],
+                qemu_type: QemuType::Struct(
+                    Struct {
+                        name: "MigrationParameters".to_string(),
+                        fields: vec!["compress-level:int".to_string(), "compress-threads:int".to_string(), "decompress-threads:int".to_string(),
+                        "x-cpu-throttle-initial:int".to_string(), "x-cpu-throttle-increment:int".to_string()], base: None })
+        }), result);
 }
 
 #[test]
