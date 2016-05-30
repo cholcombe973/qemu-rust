@@ -229,14 +229,39 @@ named!(discriminator<&[u8], String>,
 
 'base': 'VncBasicInfo',
 */
-named!(base<&[u8], Vec<String> >,
+#[test]
+fn test_struct_base(){
+    let x: &[u8] = &[];
+    let input = "'base': 'ChardevCommon' ";
+    let result = struct_base(input.as_bytes());
+    println!("struct_base: {:?}", result);
+    assert_eq!(nom::IResult::Done(x, "ChardevCommon".to_string()), result);
+}
+
+#[test]
+fn test_union_base(){
+    let x: &[u8] = &[];
+    let input = r#"'base': {'CPU': 'int', 'current': 'bool', 'halted': 'bool',
+           'qom_path': 'str', 'thread_id': 'int', 'arch': 'CpuInfoArch' },"#;
+    let result = union_base(input.as_bytes());
+    println!("union_base: {:?}", result);
+    assert_eq!(nom::IResult::Done(x,
+        vec![
+            "CPU:int".to_string(),
+            "current:bool".to_string(),
+            "halted:bool".to_string(),
+            "qom_path:str".to_string(),
+            "thread_id:int".to_string(),
+            "arch:CpuInfoArch".to_string()]
+    ), result);
+}
+
+named!(union_base<&[u8], Vec<String> >,
     chain!(
         tag!("'base':") ~
         blanks? ~
-        fields: alt!(
-            dbg!(data_field_list) |
-            dbg!(quoted_string_vec))~
-        tag!(",")~
+        fields: dbg!(data_field_list)~
+        opt!(tag!(","))~
         blanks?,
         ||{
             fields
@@ -244,6 +269,17 @@ named!(base<&[u8], Vec<String> >,
     )
 );
 
+named!(struct_base<&[u8], String>,
+    chain!(
+        tag!("'base': ") ~
+        base: quoted_string ~
+        opt!(tag!(","))~
+        blanks?,
+        ||{
+            base
+        }
+    )
+);
 named!(data<Vec<String> >,
     chain!(
         dbg!(tag!("'data': ")) ~
@@ -258,7 +294,7 @@ named!(data<Vec<String> >,
 //Take input from unsplit_list and split it into fields
 named!(enum_list<&[u8], Vec<String> >,
     chain!(
-        l: unsplit_list,
+        l: dbg!(unsplit_list),
         ||{
             let parts: Vec<&str> = l.split(",").collect();
             parts.iter()
@@ -285,6 +321,7 @@ fn test_enum_list(){
 named!(field_pair<&[u8], (String, String) >,
     chain!(
         name: quoted_string ~
+        blanks? ~
         tag!(": ") ~
         qemu_type: quoted_string ~
         call!(trailing_chars),
@@ -330,21 +367,25 @@ fn trailing_chars(input: &[u8]) ->nom::IResult<&[u8], ()>{
 struct Struct{
     name: String,
     fields: Vec<String>,
-    base: Option<Vec<String>>, //Fields from the base class
+    base: Option<String>, //Fields from the base class
 }
 
 impl Struct{
     fn parse(input: & [u8], name: String) -> nom::IResult<&[u8], Self> {
-        println!("Input to Struct: {:?}", String::from_utf8_lossy(input));
+        //println!("Input to Struct: {:?}", String::from_utf8_lossy(input));
 
         //Check if base is first. Sometimes it comes first and sometimes data comes first
-        let base_first = base(input);
+        let base_first = struct_base(input);
         match base_first {
             nom::IResult::Done(remaining, base) => {
                 //println!("base first: {:?}", String::from_utf8_lossy(remaining));
                 chain!(
                     remaining,
-                    dbg!(tag!("'data': ")) ~
+                    //dbg!(tag!("'data': ")) ~
+                    tag!("'data'")~
+                    dbg!(opt!(blanks))~
+                    tag!(":")~
+                    dbg!(opt!(blanks))~
                     data: dbg!(data_field_list)~
                     dbg!(tag!(","))?~
                     dbg!(blanks)?,
@@ -360,14 +401,18 @@ impl Struct{
             nom::IResult::Incomplete(needed) => nom::IResult::Incomplete(needed),
             nom::IResult::Error(_) => {
                 //Data is probably first
-                println!("Data first input: {:?}", String::from_utf8_lossy(input));
+                //println!("Data first input: {:?}", String::from_utf8_lossy(input));
                 chain!(
                     input,
-                    dbg!(tag!("'data': ")) ~
+                    //dbg!(tag!("'data': ")) ~
+                    tag!("'data'")~
+                    dbg!(opt!(blanks))~
+                    tag!(":")~
+                    dbg!(opt!(blanks))~
                     data: dbg!(data_field_list)~
-                    dbg!(tag!(","))?~
+                    dbg!(opt!(tag!(",")))~
                     dbg!(blanks)?~
-                    base: dbg!(base) ? ,
+                    base: dbg!(opt!(struct_base)) ,
                     ||{
                         Struct{
                             name: name,
@@ -394,11 +439,11 @@ impl Command{
         //println!("Input to Command: {:?}", String::from_utf8_lossy(input));
         chain!(
             input,
-            dbg!(tag!("'data': "))? ~
-            data: dbg!(data_field_list)?~
-            dbg!(tag!(","))?~
-            dbg!(blanks)?~
-            gen: dbg!(gen) ? ~
+            dbg!(opt!(tag!("'data': "))) ~
+            data: dbg!(opt!(data_field_list))~
+            dbg!(opt!(tag!(",")))~
+            dbg!(opt!(blanks))~
+            gen: dbg!(opt!(gen)) ~
             returns_list: parse_return_list ? ~
             returns_string: parse_return_string ? ~
             dbg!(blanks)?,
@@ -433,13 +478,17 @@ struct Union{
 
 impl Union{
     fn parse(input: & [u8], name: String) -> nom::IResult<&[u8], Self> {
-        println!("Input to Union: {:?}", String::from_utf8_lossy(input));
+        //println!("Input to Union: {:?}", String::from_utf8_lossy(input));
         chain!(
             input,
-            base: dbg!(base) ? ~
-            discriminator_name: dbg!(discriminator) ? ~
-            dbg!(tag!("'data':"))~
-            dbg!(blanks)?~
+            base: dbg!(opt!(union_base)) ~
+            discriminator_name: dbg!(opt!(discriminator)) ~
+            //dbg!(tag!("'data':"))~
+            tag!("'data'")~
+            dbg!(opt!(blanks))~
+            tag!(":")~
+            dbg!(opt!(blanks))~
+            //dbg!(opt!(blanks))~
             fields: dbg!(data_field_list)~
             blanks?,
             ||{
@@ -465,8 +514,10 @@ impl Enum{
         //println!("Input to Enum: {:?}", String::from_utf8_lossy(input));
         chain!(
             input,
-            tag!("'data': ")~
-            dbg!(blanks)?~
+            tag!("'data'")~
+            dbg!(opt!(blanks))~
+            tag!(":")~
+            dbg!(opt!(blanks))~
             fields: dbg!(enum_list)~
             blanks?,
             ||{
@@ -777,6 +828,22 @@ fn test_command_section_parser(){
     println!("test_section_parser result: {:?}", result);
 
 }
+
+#[test]
+fn test_section(){
+    let input = r#"##
+# @InputButton
+#
+# Button of a pointer input device (mouse, tablet).
+#
+# Since: 2.0
+##
+{ 'enum'  : 'InputButton',
+  'data'  : [ 'left', 'middle', 'right', 'wheel-up', 'wheel-down' ] }"#;
+    let result = Section::parse(input.as_bytes());
+    println!("test_section result: {:?}", result);
+}
+
 #[test]
 fn test_command_section_parser2(){
     let input = r#"# @add_client
@@ -819,9 +886,10 @@ impl Section{
         chain!(
             input,
             comments: comment_block~
-            tag!("{ ")~
+            dbg!(tag!("{"))~
+            blanks? ~
             qemu_type: dbg!(call!(QemuType::parse)) ~
-            tag!("}")~
+            dbg!(tag!("}"))~
             blanks?,
             ||{
                 Section{
@@ -862,7 +930,7 @@ fn main() {
     println!("Parsing result: {:?}", result);
     */
 
-    let mut f = File::open("/home/chris/repos/qemu-rust-generator/test-file.txt").unwrap();
+    let mut f = File::open("/home/chris/repos/qemu-rust-generator/test/test-file.txt").unwrap();
     let mut buffer = String::new();
 
     f.read_to_string(&mut buffer).unwrap();
