@@ -8,7 +8,7 @@ just add a template to the templates folder and follow the examples in there.
 
 Unit Testing
 ------------
-This is copied from (qemu-java)[https://github.com/shevek/qemu-java] because I think it hits at the heart of why this
+This is copied from [qemu-java](https://github.com/shevek/qemu-java) because I think it hits at the heart of why this
 project is important:
 
 > It's all about development speed, and development speed is so much about test speed, and this package is a key part of the solution to test speed.
