@@ -11,6 +11,7 @@ use hyper::Client;
 use hyper::header::Connection;
 
 mod parse_qapi;
+mod QApiConnection;
 
 fn main() {
     simple_logger::init_with_level(log::LogLevel::Warn).unwrap();
@@ -39,6 +40,9 @@ fn main() {
     match result{
         nom::IResult::Done(_, qemu) => {
             println!("Result: {:?}", qemu);
+            for result in qemu{
+                parse_qapi::print_section(result);
+            }
         }
         nom::IResult::Incomplete(needed) => {
             println!("Incomplete: {:?}", needed);

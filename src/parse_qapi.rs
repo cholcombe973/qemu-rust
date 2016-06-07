@@ -161,9 +161,9 @@ named!(unsplit_list<&[u8], String>,
 
 named!(unsplit_field_list<&[u8], &str>,
     map_res!(chain!(
-        dbg!(tag!("{")) ~
-        values: dbg!(take_until!("}")) ~
-        dbg!(tag!("}")) ,
+        tag!("{") ~
+        values: take_until!("}") ~
+        tag!("}"),
         ||{
             values
         }
@@ -253,7 +253,7 @@ named!(union_base<&[u8], Vec<String> >,
     chain!(
         tag!("'base':") ~
         blanks? ~
-        fields: dbg!(data_field_list)~
+        fields: data_field_list~
         opt!(tag!(","))~
         blanks?,
         ||{
@@ -275,10 +275,10 @@ named!(struct_base<&[u8], String>,
 );
 named!(data<Vec<String> >,
     chain!(
-        dbg!(tag!("'data': ")) ~
-        data: dbg!(data_field_list)~
-        dbg!(tag!(","))~
-        dbg!(blanks)?,
+        tag!("'data': ") ~
+        data: data_field_list~
+        tag!(",")~
+        blanks?,
         ||{
             data
         }
@@ -287,7 +287,7 @@ named!(data<Vec<String> >,
 //Take input from unsplit_list and split it into fields
 named!(enum_list<&[u8], Vec<String> >,
     chain!(
-        l: dbg!(unsplit_list),
+        l: unsplit_list,
         ||{
             let parts: Vec<&str> = l.split(",").collect();
             parts.iter()
@@ -376,12 +376,12 @@ impl Struct{
                     remaining,
                     //dbg!(tag!("'data': ")) ~
                     tag!("'data'")~
-                    dbg!(opt!(blanks))~
+                    opt!(blanks)~
                     tag!(":")~
-                    dbg!(opt!(blanks))~
-                    data: dbg!(data_field_list)~
-                    dbg!(tag!(","))?~
-                    dbg!(blanks)?,
+                    opt!(blanks)~
+                    data: data_field_list~
+                    tag!(",")?~
+                    blanks?,
                     ||{
                         Struct{
                             name: name,
@@ -399,13 +399,13 @@ impl Struct{
                     input,
                     //dbg!(tag!("'data': ")) ~
                     tag!("'data'")~
-                    dbg!(opt!(blanks))~
+                    opt!(blanks)~
                     tag!(":")~
-                    dbg!(opt!(blanks))~
-                    data: dbg!(data_field_list)~
-                    dbg!(opt!(tag!(",")))~
-                    dbg!(blanks)?~
-                    base: dbg!(opt!(struct_base)) ,
+                    opt!(blanks)~
+                    data: data_field_list~
+                    opt!(tag!(","))~
+                    blanks?~
+                    base: opt!(struct_base),
                     ||{
                         Struct{
                             name: name,
@@ -416,6 +416,16 @@ impl Struct{
                 )
             }
         }
+    }
+    fn to_string(self)->String{
+        let mut output = String::from(format!("pub struct {}{{", self.name));
+        //output.push_str(&format!("pub struct {}", self.name)));
+        format!(r#"
+            //Derive json
+            #[derive(Debug)]
+            pub struct {}{{
+                {fields}
+            }}"#, self.name, fields=self.fields.join("pub"))
     }
 }
 
@@ -432,14 +442,14 @@ impl Command{
         //println!("Input to Command: {:?}", String::from_utf8_lossy(input));
         chain!(
             input,
-            dbg!(opt!(tag!("'data': "))) ~
-            data: dbg!(opt!(data_field_list))~
-            dbg!(opt!(tag!(",")))~
-            dbg!(opt!(blanks))~
-            gen: dbg!(opt!(gen)) ~
+            opt!(tag!("'data': "))~
+            data: opt!(data_field_list)~
+            opt!(tag!(","))~
+            opt!(blanks)~
+            gen: opt!(gen) ~
             returns_list: parse_return_list ? ~
             returns_string: parse_return_string ? ~
-            dbg!(blanks)?,
+            blanks?,
             ||{
                 let return_value: Option<QemuReturnType>;
                 if returns_list.is_some(){
@@ -458,6 +468,18 @@ impl Command{
             }
         )
     }
+    fn to_string(self)->String{
+        let mut fields = String::new();
+        if let Some(f) = self.fields{
+            fields.push_str(&f.into_iter().map(|s| s.replace("-", "_")).collect::<Vec<String>>().join(","))
+        }
+        format!(r#"
+        //Derive json
+        #[derive(Debug)]
+        pub struct {} {{
+            {fields}
+        }}"#, self.name.replace("-", "_"), fields=fields)
+    }
 }
 
 #[derive(Debug, Eq, PartialEq)]
@@ -474,15 +496,15 @@ impl Union{
         //println!("Input to Union: {:?}", String::from_utf8_lossy(input));
         chain!(
             input,
-            base: dbg!(opt!(union_base)) ~
-            discriminator_name: dbg!(opt!(discriminator)) ~
+            base: opt!(union_base) ~
+            discriminator_name: opt!(discriminator) ~
             //dbg!(tag!("'data':"))~
             tag!("'data'")~
-            dbg!(opt!(blanks))~
+            opt!(blanks)~
             tag!(":")~
-            dbg!(opt!(blanks))~
+            opt!(blanks)~
             //dbg!(opt!(blanks))~
-            fields: dbg!(data_field_list)~
+            fields: data_field_list~
             blanks?,
             ||{
                 Union{
@@ -508,10 +530,10 @@ impl Enum{
         chain!(
             input,
             tag!("'data'")~
-            dbg!(opt!(blanks))~
+            opt!(blanks)~
             tag!(":")~
-            dbg!(opt!(blanks))~
-            fields: dbg!(enum_list)~
+            opt!(blanks)~
+            fields: enum_list~
             blanks?,
             ||{
                 Enum{
@@ -520,6 +542,14 @@ impl Enum{
                 }
             }
         )
+    }
+    fn to_string(self)->String{
+        format!(r#"
+            //Derive json
+            #[derive(Debug)]
+            pub enum {} {{
+                {fields}
+            }}"#, self.name, fields=self.fields.into_iter().map(|s| s.replace("-", "_")).collect::<Vec<String>>().join(","))
     }
 }
 
@@ -546,7 +576,7 @@ impl QemuType {
         //println!("Input to Type: {:?}", String::from_utf8_lossy(input));
         let f = chain!(
             input,
-            fields: dbg!(field_pair)~
+            fields: field_pair~
             blanks? ,
             ||{
                 fields
@@ -879,10 +909,10 @@ impl Section{
         chain!(
             input,
             comments: comment_block~
-            dbg!(tag!("{"))~
+            tag!("{")~
             blanks? ~
-            qemu_type: dbg!(call!(QemuType::parse)) ~
-            dbg!(tag!("}"))~
+            qemu_type: call!(QemuType::parse) ~
+            tag!("}")~
             blanks?,
             ||{
                 Section{
@@ -891,6 +921,21 @@ impl Section{
                 }
             }
         )
+    }
+}
+
+pub fn print_section(s: Section){
+    match s.qemu_type{
+        QemuType::Struct(s) => {},
+        QemuType::Command(c) => {
+            println!("{}", c.to_string());
+        },
+        QemuType::Enum(e) => {
+            println!("{}", e.to_string());
+        },
+        QemuType::Include{name} => {},
+        QemuType::Union(u) => {},
+        QemuType::Unknown => {},
     }
 }
 
