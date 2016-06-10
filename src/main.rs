@@ -39,7 +39,7 @@ fn main() {
     let result = parse_qapi::parse_sections(buffer.as_bytes());
     match result{
         nom::IResult::Done(_, qemu) => {
-            println!("Result: {:?}", qemu);
+            //println!("Result: {:?}", qemu);
             for result in qemu{
                 parse_qapi::print_section(result);
             }

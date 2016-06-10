@@ -171,17 +171,29 @@ named!(unsplit_field_list<&[u8], &str>,
 );
 
 //Take input from unsplit_field_list and split it into fields
-named!(data_field_list<&[u8], Vec<String> >,
+named!(data_field_list<&[u8], Vec<(String,String)> >,
     chain!(
         field_list: unsplit_field_list,
         ||{
             //Remove whitespace
+            let mut result: Vec<(String,String)> = Vec::with_capacity(field_list.len());
             let parts: Vec<&str> = field_list.split(",").collect();
-            parts.iter()
+            let clean: Vec<String> = parts.iter()
                 .map(|s| s.replace("'", ""))
                 .map(|s| s.replace(" ", ""))
                 .map(|s| s.replace("\n", ""))
-                .map(|s| s.replace("*", "")).collect()
+                .map(|s| s.replace("*", "")).collect();
+
+            for part in clean.iter(){
+                let s: Vec<&str> = part.split(":").collect();
+                result.push(
+                    (
+                        s.get(0).unwrap().to_string(),
+                        s.get(1).unwrap().to_string()
+                    )
+                )
+            }
+            result
         }
     )
 );
@@ -196,10 +208,10 @@ fn test_data_field_list(){
     println!("test_data_field_list Result: {:?}", result);
     assert_eq!(nom::IResult::Done(x,
         vec![
-            "protocol:str".to_string(),
-            "fdname:str".to_string(),
-            "skipauth:bool".to_string(),
-            "tls:bool".to_string(),
+            ("protocol".to_string(),"str".to_string()),
+            ("fdname".to_string(),"str".to_string()),
+            ("skipauth".to_string(),"bool".to_string()),
+            ("tls".to_string(),"bool".to_string()),
         ]), result);
 }
 
@@ -240,16 +252,17 @@ fn test_union_base(){
     println!("union_base: {:?}", result);
     assert_eq!(nom::IResult::Done(x,
         vec![
-            "CPU:int".to_string(),
-            "current:bool".to_string(),
-            "halted:bool".to_string(),
-            "qom_path:str".to_string(),
-            "thread_id:int".to_string(),
-            "arch:CpuInfoArch".to_string()]
+            ("CPU".to_string(),"int".to_string()),
+            ("current".to_string(),"bool".to_string()),
+            ("halted".to_string(),"bool".to_string()),
+            ("qom_path".to_string(),"str".to_string()),
+            ("thread_id".to_string(),"int".to_string()),
+            ("arch".to_string(),"CpuInfoArch".to_string())
+        ]
     ), result);
 }
 
-named!(union_base<&[u8], Vec<String> >,
+named!(union_base<&[u8], Vec<(String,String)> >,
     chain!(
         tag!("'base':") ~
         blanks? ~
@@ -273,6 +286,7 @@ named!(struct_base<&[u8], String>,
         }
     )
 );
+/*
 named!(data<Vec<String> >,
     chain!(
         tag!("'data': ") ~
@@ -284,6 +298,7 @@ named!(data<Vec<String> >,
         }
     )
 );
+*/
 //Take input from unsplit_list and split it into fields
 named!(enum_list<&[u8], Vec<String> >,
     chain!(
@@ -356,10 +371,18 @@ fn trailing_chars(input: &[u8]) ->nom::IResult<&[u8], ()>{
     }
 }
 
+fn json_fields_string(fields: Vec<(String, String)>) -> String{
+    let mut result = String::new();
+    for f in fields{
+        result.push_str(&format!("s.push_str(\"{}\": {});\n", f.0, f.1));
+    }
+    result
+}
+
 #[derive(Debug, Eq, PartialEq)]
 pub struct Struct{
     pub name: String,
-    pub fields: Vec<String>,
+    pub fields: Vec<(String,String)>,
     pub base: Option<String>, //Fields from the base class
 }
 
@@ -418,21 +441,41 @@ impl Struct{
         }
     }
     fn to_string(self)->String{
-        let mut output = String::from(format!("pub struct {}{{", self.name));
-        //output.push_str(&format!("pub struct {}", self.name)));
+        let mut struct_fields:Vec<String> = Vec::new();
+
+        if let Some(b) = self.base{
+            struct_fields.push(format!("base: {}", b));
+        };
+
+        for f in self.fields.clone(){
+            struct_fields.push(format!("{name}:{type}",
+                name=f.0.replace("-", "_"),
+                type=f.1.replace("str", "String")
+                .replace("int", "i64")
+            ));
+        }
+
+
         format!(r#"
-            //Derive json
-            #[derive(Debug)]
-            pub struct {}{{
+            #[derive(Debug, Serialize, Deserialize)]
+            pub struct {name}{{
                 {fields}
-            }}"#, self.name, fields=self.fields.join("pub"))
+            }}
+            impl {name}{{
+                fn to_qemu_json()->String{{
+                    let mut s = String::from("{{\"execute\": \"{name}\"");
+                    {fields_json}
+                    s.push_str("}}");
+                }}
+            }}
+            "#, name=self.name, fields=struct_fields.join(","), fields_json=json_fields_string(self.fields))
     }
 }
 
 #[derive(Debug, Eq, PartialEq)]
 pub struct Command{
     pub name: String,
-    pub fields: Option<Vec<String>>,
+    pub fields: Option<Vec<(String,String)>>,
     pub gen: Option<bool>,
     pub returns: Option<QemuReturnType>, //Either a type or a list of type
 }
@@ -468,26 +511,52 @@ impl Command{
             }
         )
     }
+    //TODO Put this in a mod of just qemu commands
     fn to_string(self)->String{
-        let mut fields = String::new();
+        let mut struct_fields:Vec<String> = Vec::new();
+
         if let Some(f) = self.fields{
-            fields.push_str(&f.into_iter().map(|s| s.replace("-", "_")).collect::<Vec<String>>().join(","))
+            for field in f{
+                struct_fields.push(format!("{name}:{type}",
+                    name=field.0.replace("-", "_"),
+                    type=field.1.replace("str", "String")
+                    .replace("int", "i64")
+                ));
+            }
         }
+
+        if let Some(r) = self.returns{
+            match r{
+                QemuReturnType::List(l) => {
+                    struct_fields.push(format!("returns:{}", l.replace("str", "String")))
+                },
+                QemuReturnType::String(s) => {
+                    struct_fields.push(format!("returns:{}", s.replace("str", "String")))
+                },
+            }
+        }
+
+        let mut gen = String::new();
+        if let Some(g) = self.gen{
+            struct_fields.push("gen: bool".to_string());
+        }
+
         format!(r#"
-        //Derive json
-        #[derive(Debug)]
+        #[derive(Debug, Serialize, Deserialize)]
         pub struct {} {{
             {fields}
-        }}"#, self.name.replace("-", "_"), fields=fields)
+        }}"#,
+        self.name.replace("-", "_"),
+        fields=struct_fields.join(","))
     }
 }
 
 #[derive(Debug, Eq, PartialEq)]
 pub struct Union{
     pub name: String,
-    pub base: Option<Vec<String>>,
+    //pub base: Option<Vec<String>>,
     pub discriminator: Option<String>,
-    pub data: Vec<String>,
+    pub data: Vec<(String,String)>,
 
 }
 
@@ -496,7 +565,7 @@ impl Union{
         //println!("Input to Union: {:?}", String::from_utf8_lossy(input));
         chain!(
             input,
-            base: opt!(union_base) ~
+            //base: opt!(union_base) ~
             discriminator_name: opt!(discriminator) ~
             //dbg!(tag!("'data':"))~
             tag!("'data'")~
@@ -509,7 +578,7 @@ impl Union{
             ||{
                 Union{
                     name: name,
-                    base: base,
+                    //base: base,
                     discriminator: discriminator_name,
                     data: fields,
                 }
@@ -545,8 +614,7 @@ impl Enum{
     }
     fn to_string(self)->String{
         format!(r#"
-            //Derive json
-            #[derive(Debug)]
+            #[derive(Debug, Serialize, Deserialize)]
             pub enum {} {{
                 {fields}
             }}"#, self.name, fields=self.fields.into_iter().map(|s| s.replace("-", "_")).collect::<Vec<String>>().join(","))
@@ -823,8 +891,13 @@ fn test_struct_section_parser(){
                 qemu_type: QemuType::Struct(
                     Struct {
                         name: "MigrationParameters".to_string(),
-                        fields: vec!["compress-level:int".to_string(), "compress-threads:int".to_string(), "decompress-threads:int".to_string(),
-                        "x-cpu-throttle-initial:int".to_string(), "x-cpu-throttle-increment:int".to_string()], base: None })
+                        fields: vec![
+                            ("compress-level".to_string(), "int".to_string()),
+                            ("compress-threads".to_string(),"int".to_string()),
+                            ("decompress-threads".to_string(),"int".to_string()),
+                            ("x-cpu-throttle-initial".to_string(),"int".to_string()),
+                            ("x-cpu-throttle-increment".to_string(),"int".to_string())
+                        ], base: None })
         }), result);
 }
 
@@ -926,11 +999,16 @@ impl Section{
 
 pub fn print_section(s: Section){
     match s.qemu_type{
-        QemuType::Struct(s) => {},
+        QemuType::Struct(s) => {
+            //TODO: Write these to structs/mod.rs
+            println!("{}", s.to_string());
+        },
         QemuType::Command(c) => {
+            //TODO: Write these to commands/mod.rs
             println!("{}", c.to_string());
         },
         QemuType::Enum(e) => {
+            //TODO: Write these to enums/mod.rs
             println!("{}", e.to_string());
         },
         QemuType::Include{name} => {},
