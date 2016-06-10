@@ -32,7 +32,7 @@ fn main() {
     println!("Parsing result: {:?}", result);
     */
 
-    let mut f = File::open("/home/chris/repos/qemu-rust-generator/test/qapi.json").unwrap();
+    let mut f = File::open("test/qapi.json").unwrap();
     let mut buffer = String::new();
 
     f.read_to_string(&mut buffer).unwrap();
