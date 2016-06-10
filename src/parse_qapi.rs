@@ -371,14 +371,6 @@ fn trailing_chars(input: &[u8]) ->nom::IResult<&[u8], ()>{
     }
 }
 
-fn json_fields_string(fields: Vec<(String, String)>) -> String{
-    let mut result = String::new();
-    for f in fields{
-        result.push_str(&format!("s.push_str(\"{}\": {});\n", f.0, f.1));
-    }
-    result
-}
-
 #[derive(Debug, Eq, PartialEq)]
 pub struct Struct{
     pub name: String,
@@ -448,7 +440,7 @@ impl Struct{
         };
 
         for f in self.fields.clone(){
-            struct_fields.push(format!("{name}:{type}",
+            struct_fields.push(format!("pub {name}:{type}",
                 name=f.0.replace("-", "_"),
                 type=f.1.replace("str", "String")
                 .replace("int", "i64")
@@ -461,14 +453,7 @@ impl Struct{
             pub struct {name}{{
                 {fields}
             }}
-            impl {name}{{
-                fn to_qemu_json()->String{{
-                    let mut s = String::from("{{\"execute\": \"{name}\"");
-                    {fields_json}
-                    s.push_str("}}");
-                }}
-            }}
-            "#, name=self.name, fields=struct_fields.join(","), fields_json=json_fields_string(self.fields))
+            "#, name=self.name, fields=struct_fields.join(","))
     }
 }
 
@@ -514,24 +499,32 @@ impl Command{
     //TODO Put this in a mod of just qemu commands
     fn to_string(self)->String{
         let mut struct_fields:Vec<String> = Vec::new();
+        let mut impl_fields:Vec<String> = Vec::new();
+        let mut impl_input:Vec<String> = Vec::new();
 
         if let Some(f) = self.fields{
             for field in f{
-                struct_fields.push(format!("{name}:{type}",
-                    name=field.0.replace("-", "_"),
-                    type=field.1.replace("str", "String")
-                    .replace("int", "i64")
-                ));
+                let name = field.0.replace("-", "_");
+                let field_type =field.1.replace("str", "String")
+                    .replace("int", "i64");
+
+                struct_fields.push(format!("pub {name}:{type}", name=name, type=field_type));
+                impl_fields.push(format!("{name}:{type}", name=name, type=field_type));
+                impl_input.push(format!("{name}:{type}",name=name, type=field_type));
             }
         }
 
         if let Some(r) = self.returns{
             match r{
                 QemuReturnType::List(l) => {
-                    struct_fields.push(format!("returns:{}", l.replace("str", "String")))
+                    struct_fields.push(format!("#[serde(skip_serializing)]\nreturns:{}", l.replace("str", "String")));
+                    impl_fields.push(format!("returns:{}", l.replace("str", "String")));
+                    impl_input.push(format!("{name}:Vec<{type}>",name=l, type=l));
                 },
                 QemuReturnType::String(s) => {
-                    struct_fields.push(format!("returns:{}", s.replace("str", "String")))
+                    struct_fields.push(format!("#[serde(skip_serializing)]\nreturns:{}", s.replace("str", "String")));
+                    impl_fields.push(format!("returns:{}", s.replace("str", "String")));
+                    impl_input.push(format!("{name}:{type}",name=s, type=s));
                 },
             }
         }
@@ -543,11 +536,24 @@ impl Command{
 
         format!(r#"
         #[derive(Debug, Serialize, Deserialize)]
-        pub struct {} {{
+        pub struct {name} {{
+            execute: String,
             {fields}
-        }}"#,
-        self.name.replace("-", "_"),
-        fields=struct_fields.join(","))
+        }}
+        impl {name} {{
+            pub fn new({impl_input})->{name}{{
+                {name}{{
+                    execute: "{name}".to_string(),
+                    {impl_fields}
+                }}
+            }}
+        }}
+        "#,
+        name=self.name.replace("-", "_"),
+        fields=struct_fields.join(","),
+        impl_fields=impl_fields.join(","),
+        impl_input=impl_input.join(",")
+    )
     }
 }
 
