@@ -509,7 +509,7 @@ impl Command{
                     .replace("int", "i64");
 
                 struct_fields.push(format!("pub {name}:{type}", name=name, type=field_type));
-                impl_fields.push(format!("{name}:{type}", name=name, type=field_type));
+                impl_fields.push(format!("{name}:{name}", name=name));
                 impl_input.push(format!("{name}:{type}",name=name, type=field_type));
             }
         }
@@ -1017,8 +1017,13 @@ pub fn print_section(s: Section){
             //TODO: Write these to enums/mod.rs
             println!("{}", e.to_string());
         },
-        QemuType::Include{name} => {},
-        QemuType::Union(u) => {},
+        QemuType::Include{name} => {
+            //Download and parse these
+            println!("//{}", name.to_string());
+        },
+        QemuType::Union(u) => {
+
+        },
         QemuType::Unknown => {},
     }
 }

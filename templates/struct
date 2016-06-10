@@ -1,0 +1,8 @@
+#[Derive(Debug)]
+pub struct {{name}}{
+  {% for field in fields %}
+    {{fields}}
+
+  {% endfor %}
+  {{base_fields}}
+}
