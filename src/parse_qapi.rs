@@ -5,7 +5,7 @@ use nom::{eof, multispace, not_line_ending, space};
 
 named!(blanks,
        chain!(
-           many0!(alt!(multispace | comment_one_line)),
+           many0!(multispace),
            //TODO: This gets the comments but breaks the parser somewhere
            //many0!(multispace),
            || { &b""[..] }));
