@@ -40,6 +40,68 @@ named!(comment_line<&[u8], String>,
 );
 
 #[test]
+fn test_description_parser(){
+    let x: &[u8] = &[];
+    let input = r#"##
+# @ringbuf-write:
+#
+# Write to a ring buffer character device.
+#
+# @device: the ring buffer character device name
+#
+# @data: data to write
+#
+# @format: #optional data encoding (default 'utf8').
+#          - base64: data must be base64 encoded text.  Its binary
+#            decoding gets written.
+#            Bug: invalid base64 is currently not rejected.
+#            Whitespace *is* invalid.
+#          - utf8: data's UTF-8 encoding is written
+#          - data itself is always Unicode regardless of format, like
+#            any other string.
+#
+# Returns: Nothing on success
+#
+# Since: 1.4
+##"#;
+    let result = description(input.as_bytes());
+    assert_eq!(
+        nom::IResult::Done(x,
+            Description{
+                name: "ringbuf-write".to_string(),
+                parameters: Some(
+                    vec![
+                        ("device".to_string(), "the ring buffer character device name".to_string()),
+                        ("data".to_string(), "data to write".to_string()),
+                        ("format", "#optional data encoding (default 'utf8').
+                        #          - base64: data must be base64 encoded text.  Its binary
+                        #            decoding gets written.
+                        #            Bug: invalid base64 is currently not rejected.
+                        #            Whitespace *is* invalid.
+                        #          - utf8: data's UTF-8 encoding is written
+                        #          - data itself is always Unicode regardless of format, like
+                        #            any other string.".to_string()),
+                    ]),
+                returns: Some("Nothing on success".to_string()),
+                version_since: "1.4".to_string(),
+            }),result);
+    println!("test_comment_parsing Result: {:?}", result);
+}
+
+/*
+named!(description<Description>,
+    chain!(
+        name: take_until_and_consume!("\n")~
+        description: take_until!("@")~
+
+        ||{
+
+        }
+    )
+)
+*/
+
+#[test]
 fn test_comment_parsing(){
     let x: &[u8] = &[];
 
@@ -286,19 +348,7 @@ named!(struct_base<&[u8], String>,
         }
     )
 );
-/*
-named!(data<Vec<String> >,
-    chain!(
-        tag!("'data': ") ~
-        data: data_field_list~
-        tag!(",")~
-        blanks?,
-        ||{
-            data
-        }
-    )
-);
-*/
+
 //Take input from unsplit_list and split it into fields
 named!(enum_list<&[u8], Vec<String> >,
     chain!(
@@ -369,6 +419,14 @@ fn trailing_chars(input: &[u8]) ->nom::IResult<&[u8], ()>{
             }
         }
     }
+}
+
+#[derive(Debug, Eq, PartialEq)]
+pub struct Description{
+    name: String,
+    parameters: Option<Vec<(String,String)>>,
+    returns: Option<String>,
+    version_since: String,
 }
 
 #[derive(Debug, Eq, PartialEq)]
@@ -1005,20 +1063,24 @@ impl Section{
 
 pub fn print_section(s: Section){
     match s.qemu_type{
-        QemuType::Struct(s) => {
+        QemuType::Struct(st) => {
             //TODO: Write these to structs/mod.rs
-            println!("{}", s.to_string());
+            println!("{}", s.description.join("\n///"));
+            println!("{}", st.to_string());
         },
         QemuType::Command(c) => {
             //TODO: Write these to commands/mod.rs
+            println!("{}", s.description.join("\n///"));
             println!("{}", c.to_string());
         },
         QemuType::Enum(e) => {
             //TODO: Write these to enums/mod.rs
+            println!("{}", s.description.join("\n///"));
             println!("{}", e.to_string());
         },
         QemuType::Include{name} => {
             //Download and parse these
+            println!("{}", s.description.join("\n///"));
             println!("//{}", name.to_string());
         },
         QemuType::Union(u) => {
