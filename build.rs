@@ -7,26 +7,30 @@ extern crate simple_logger;
 use hyper::Client;
 use hyper::header::Connection;
 
-use std::fs::File;
+use std::fs::{File, OpenOptions};
 use std::io::prelude::*;
 use std::path::{PathBuf};
 
 fn write_sections_to_file(p: &PathBuf, data: Vec<parse_qapi::Section>){
-    let mut f = File::open(p).unwrap();
+    let mut f = OpenOptions::new().write(true).open(p).unwrap();
 
     for section in data{
         match section.qemu_type{
             parse_qapi::QemuType::Struct(st) => {
                 f.write(section.description.join("\n///").as_bytes()).unwrap();
-                f.write(st.to_string().as_bytes()).unwrap();
+                f.write(st.to_rust_string().as_bytes()).unwrap();
             },
             parse_qapi::QemuType::Command(c) => {
                 f.write(section.description.join("\n///").as_bytes()).unwrap();
-                f.write(c.to_string().as_bytes()).unwrap();
+                f.write(c.to_rust_string().as_bytes()).unwrap();
+            },
+            parse_qapi::QemuType::Event(e) => {
+                f.write(section.description.join("\n///").as_bytes()).unwrap();
+                f.write(e.to_rust_string().as_bytes()).unwrap();
             },
             parse_qapi::QemuType::Enum(e) => {
                 f.write(section.description.join("\n///").as_bytes()).unwrap();
-                f.write(e.to_string().as_bytes()).unwrap();
+                f.write(e.to_rust_string().as_bytes()).unwrap();
             },
             parse_qapi::QemuType::Include{name} => {
                 f.write(section.description.join("\n///").as_bytes()).unwrap();

@@ -7,6 +7,7 @@ extern crate slab;
 use mio::{EventLoop, EventSet, PollOpt, Token};
 use mio::tcp::{TcpStream};
 
+mod qapi;
 mod qapi_connection;
 
 fn connect_to_qemu(){
