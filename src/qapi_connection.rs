@@ -4,7 +4,7 @@ extern crate mio;
 
 use std::collections::HashMap;
 
-use bytes::{Buf, ByteBuf, MutByteBuf, SliceBuf};
+use bytes::{Buf, ByteBuf, MutByteBuf};
 use mio::*;
 use mio::tcp::{TcpStream};
 
@@ -43,9 +43,6 @@ struct Version{
 
 impl Version{
     fn from(j: &json::JsonValue)->Version{
-        //Json parse_greeting result: Object({"QMP": Object({"capabilities": Array([]),
-        //"version": Object({"package": String(" (Debian 2.0.0+dfsg-2ubuntu1.19)"),
-        //"qemu": Object({"major": Number(2), "micro": Number(0), "minor": Number(0)})})})})
         let package_version = j["package"].as_str().unwrap_or("");
         let qemu = RustVersion::from(&j["qemu"]);
 
@@ -64,16 +61,16 @@ struct QMP{
 
 impl QMP{
     fn from(j: json::JsonValue)->QMP{
-        //Json parse_greeting result: Object({"QMP": Object({"capabilities": Array([]),
+        //j: Object({"QMP": Object({"capabilities": Array([]),
         //"version": Object({"package": String(" (Debian 2.0.0+dfsg-2ubuntu1.19)"),
         //"qemu": Object({"major": Number(2), "micro": Number(0), "minor": Number(0)})})})})
 
-        //let package_version = j["package"].as_str().unwrap_or("");
+        let qmp = j["QMP"].clone();
         let mut capabilities = Vec::new();
-        for cap in j["capabilities"].members(){
+        for cap in qmp["capabilities"].members(){
             capabilities.push(cap.as_str().unwrap_or("").to_string())
         }
-        let version = Version::from(&j["version"]);
+        let version = Version::from(&qmp["version"]);
 
         QMP{
             capabilities: capabilities,
@@ -86,10 +83,33 @@ impl QMP{
 struct Command{
     name: String,
 }
+impl Command{
+    fn from(j: &json::JsonValue) -> Command{
+        Command{
+            name: j["name"].as_str().unwrap_or("").to_string(),
+        }
+    }
+}
 
 #[derive(Debug)]
 struct QemuCommands{
     commands: Vec<Command>,
+}
+
+impl QemuCommands{
+    fn from(j: json::JsonValue)->QemuCommands{
+        //j: {"return": Array([Object({"name": String("query-named-block-nodes")}), ...
+
+        let mut commands = Vec::new();
+        for cmd_object in j["return"].members(){
+            let c = Command::from(&cmd_object);
+            commands.push(c);
+        }
+
+        QemuCommands{
+            commands: commands,
+        }
+    }
 }
 
 pub struct QApiConnection{
@@ -132,7 +152,13 @@ impl QApiConnection{
 
     fn parse_commands<'a>(&self, bytes: &'a [u8]){
         let result = json::parse(&String::from_utf8_lossy(bytes)).unwrap();
-        println!("Json parse_commands result: {:?}", result);
+        let commands = QemuCommands::from(result);
+        println!("Json parse_commands result: {:?}", commands);
+    }
+
+    /// Send Qemu a command
+    fn send_command(){
+
     }
 
     ///There's an initial ping/pong type communication going on between the client and the
@@ -185,9 +211,7 @@ impl QApiConnection{
                         //Lets ask for the capabilities set
                         self.state = ClientState::Ready;
 
-                        //TODO: Ok how do we wait for user input now?
-                        //self.interest.remove(EventSet::readable());
-                        //self.interest.insert(EventSet::writable());
+                        //Wait for user input now
                     },
                     ClientState::Ready => {
                         //Ready to receive events and user input

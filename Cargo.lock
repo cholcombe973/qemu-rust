@@ -8,6 +8,7 @@ dependencies = [
  "log 0.3.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "mio 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "nom 1.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "parse_qapi 0.1.0",
  "simple_logger 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "slab 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -252,6 +253,14 @@ dependencies = [
  "gcc 0.3.28 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)",
  "openssl-sys 0.7.10 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "parse_qapi"
+version = "0.1.0"
+dependencies = [
+ "json 0.8.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "nom 1.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
