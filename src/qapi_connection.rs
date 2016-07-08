@@ -1,10 +1,10 @@
 extern crate bytes;
+extern crate json;
 extern crate mio;
-extern crate serde_json;
 
 use std::collections::HashMap;
 
-use bytes::{Buf, ByteBuf, MutByteBuf, SliceBuf};
+use bytes::{Buf, ByteBuf, MutByteBuf};
 use mio::*;
 use mio::tcp::{TcpStream};
 
@@ -18,39 +18,98 @@ enum ClientState{
 }
 
 //QEMU Greeting
-#[derive(Debug,Deserialize)]
+#[derive(Debug)]
 struct RustVersion{
     major: u32,
     micro: u32,
     minor: u32,
 }
-#[derive(Debug,Deserialize)]
+
+impl RustVersion{
+    fn from(j: &json::JsonValue)->RustVersion{
+        RustVersion{
+            major: j["major"].as_u32().unwrap_or(0),
+            micro: j["micro"].as_u32().unwrap_or(0),
+            minor: j["minor"].as_u32().unwrap_or(0),
+        }
+    }
+}
+
+#[derive(Debug)]
 struct Version{
     package: String,
     qemu: RustVersion,
 }
 
-#[derive(Debug,Deserialize)]
-struct QemuGreeting{
-    #[serde(rename="QMP")]
-    qmp: QMP,
+impl Version{
+    fn from(j: &json::JsonValue)->Version{
+        let package_version = j["package"].as_str().unwrap_or("");
+        let qemu = RustVersion::from(&j["qemu"]);
+
+        Version{
+            package: package_version.to_string(),
+            qemu: qemu,
+        }
+    }
 }
 
-#[derive(Debug,Deserialize)]
+#[derive(Debug)]
 struct QMP{
     capabilities: Vec<String>,
     version: Version,
 }
 
-#[derive(Debug,Deserialize)]
+impl QMP{
+    fn from(j: json::JsonValue)->QMP{
+        //j: Object({"QMP": Object({"capabilities": Array([]),
+        //"version": Object({"package": String(" (Debian 2.0.0+dfsg-2ubuntu1.19)"),
+        //"qemu": Object({"major": Number(2), "micro": Number(0), "minor": Number(0)})})})})
+
+        let qmp = j["QMP"].clone();
+        let mut capabilities = Vec::new();
+        for cap in qmp["capabilities"].members(){
+            capabilities.push(cap.as_str().unwrap_or("").to_string())
+        }
+        let version = Version::from(&qmp["version"]);
+
+        QMP{
+            capabilities: capabilities,
+            version: version,
+        }
+    }
+}
+
+#[derive(Debug)]
 struct Command{
     name: String,
 }
+impl Command{
+    fn from(j: &json::JsonValue) -> Command{
+        Command{
+            name: j["name"].as_str().unwrap_or("").to_string(),
+        }
+    }
+}
 
-#[derive(Debug,Deserialize)]
+#[derive(Debug)]
 struct QemuCommands{
-    #[serde(rename="return")]
     commands: Vec<Command>,
+}
+
+impl QemuCommands{
+    fn from(j: json::JsonValue)->QemuCommands{
+        //j: {"return": Array([Object({"name": String("query-named-block-nodes")}), ...
+
+        let mut commands = Vec::new();
+        for cmd_object in j["return"].members(){
+            let c = Command::from(&cmd_object);
+            commands.push(c);
+        }
+
+        QemuCommands{
+            commands: commands,
+        }
+    }
 }
 
 pub struct QApiConnection{
@@ -81,18 +140,25 @@ impl QApiConnection{
     }
 
     fn parse_greeting<'a>(&self, bytes: &'a [u8]){
-        let result: QemuGreeting = serde_json::from_slice(bytes).unwrap();
-        println!("Serde result: {:?}", result);
+        let result = json::parse(&String::from_utf8_lossy(bytes)).unwrap();
+        let greeting = QMP::from(result);
+        println!("Json parse_greeting result: {:?}", greeting);
     }
 
     fn parse_capabilities<'a>(&self, bytes: &'a [u8]){
-        let result: serde_json::Value = serde_json::from_slice(bytes).unwrap();
-        println!("Serde capabilities result: {:?}", result);
+        let result = json::parse(&String::from_utf8_lossy(bytes)).unwrap();
+        println!("Json parse_capabilities result: {:?}", result);
     }
 
     fn parse_commands<'a>(&self, bytes: &'a [u8]){
-        let result: QemuCommands = serde_json::from_slice(bytes).unwrap();
-        println!("Serde commands result: {:?}", result);
+        let result = json::parse(&String::from_utf8_lossy(bytes)).unwrap();
+        let commands = QemuCommands::from(result);
+        println!("Json parse_commands result: {:?}", commands);
+    }
+
+    /// Send Qemu a command
+    fn send_command(){
+
     }
 
     ///There's an initial ping/pong type communication going on between the client and the
@@ -145,9 +211,7 @@ impl QApiConnection{
                         //Lets ask for the capabilities set
                         self.state = ClientState::Ready;
 
-                        //TODO: Ok how do we wait for user input now?
-                        self.interest.remove(EventSet::readable());
-                        self.interest.insert(EventSet::writable());
+                        //Wait for user input now
                     },
                     ClientState::Ready => {
                         //Ready to receive events and user input
