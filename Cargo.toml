@@ -1,20 +1,21 @@
 [package]
-name = "qemu-rust-generator"
+name = "qemu-rust"
 version = "0.1.0"
 authors = ["Chris Holcombe <xfactor973@gmail.com>"]
 build = "build.rs"
 
 [build-dependencies]
-hyper = "*"
-log = "*"
-nom = "*"
+hyper = "~0.9"
+log = "~0.3"
+nom = "~1.2"
 parse_qapi = { path = "../parse_qapi" }
-simple_logger = "*"
+simple_logger = "~0.4"
 
 [dependencies]
-bytes = "*"
-json = "*"
-log = "*"
-mio = "*"
+bytes = "~0.3"
+json = "~0.8"
+log = "~0.3"
+mio = "~0.5"
+rustc-serialize = "~0.3"
 simple_logger = "*"
 slab = "*"
