@@ -386,7 +386,7 @@
             
             #[derive(Debug, RustcDecodable)]
             pub struct qemu_string{
-                pub str:String
+                pub String:String
             }
             
             #[derive(Debug, RustcDecodable)]

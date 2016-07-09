@@ -24,6 +24,7 @@ fn write_sections_to_files(data: Vec<parse_qapi::Section>){
     let mut commands = OpenOptions::new().write(true).truncate(true).open(commands_src).unwrap();
 
     //Include the necessary files
+    commands.write("use rustc_serialize::json;\n".as_bytes()).unwrap();
     commands.write("use events::*;\n".as_bytes()).unwrap();
     commands.write("use enums::*;\n".as_bytes()).unwrap();
     commands.write("use structs::*;\n".as_bytes()).unwrap();
