@@ -15,6 +15,12 @@ mod events;
 mod qapi_connection;
 mod structs;
 
+trait QemuCmd {
+    // Return a json blob that we can send to the Qemu Server
+    fn to_json(&self) -> String;
+    fn parse_qemu_response(&self, response: &String) -> Result<Self, String> where Self: Sized;
+}
+
 fn connect_to_qemu() {
     const CLIENT: Token = Token(1);
     let addr = "127.0.0.1:4444".parse().unwrap();

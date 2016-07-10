@@ -38,11 +38,11 @@ impl blockdev_snapshot_delete_internal_sync {
 #[derive(Debug)]
 pub struct eject {
     execute: String,
-    pub force: String,
+    pub force: bool,
     pub device: String,
 }
 impl eject {
-    pub fn new(force: String, device: String) -> eject {
+    pub fn new(force: bool, device: String) -> eject {
         eject {
             execute: "eject".to_string(),
             force: force,
@@ -68,11 +68,11 @@ impl nbd_server_start {
 #[derive(Debug)]
 pub struct nbd_server_add {
     execute: String,
-    pub writable: String,
+    pub writable: bool,
     pub device: String,
 }
 impl nbd_server_add {
-    pub fn new(writable: String, device: String) -> nbd_server_add {
+    pub fn new(writable: bool, device: String) -> nbd_server_add {
         nbd_server_add {
             execute: "nbd_server_add".to_string(),
             writable: writable,
@@ -104,10 +104,10 @@ impl query_block {
 #[derive(Debug)]
 pub struct query_blockstats {
     execute: String,
-    pub query_nodes: String,
+    pub query_nodes: bool,
 }
 impl query_blockstats {
-    pub fn new(query_nodes: String) -> query_blockstats {
+    pub fn new(query_nodes: bool) -> query_blockstats {
         query_blockstats {
             execute: "query_blockstats".to_string(),
             query_nodes: query_nodes,
@@ -148,10 +148,10 @@ pub struct block_resize {
     execute: String,
     pub device: String,
     pub node_name: String,
-    pub size: String,
+    pub size: f64,
 }
 impl block_resize {
-    pub fn new(device: String, node_name: String, size: String) -> block_resize {
+    pub fn new(device: String, node_name: String, size: f64) -> block_resize {
         block_resize {
             execute: "block_resize".to_string(),
             device: device,
@@ -197,14 +197,14 @@ pub struct block_commit {
     execute: String,
     pub backing_file: String,
     pub base: String,
-    pub speed: String,
+    pub speed: f64,
     pub top: String,
     pub device: String,
 }
 impl block_commit {
     pub fn new(backing_file: String,
                base: String,
-               speed: String,
+               speed: f64,
                top: String,
                device: String)
                -> block_commit {
@@ -252,29 +252,29 @@ impl query_named_block_nodes {
 #[derive(Debug)]
 pub struct drive_mirror {
     execute: String,
-    pub buf_size: String,
+    pub buf_size: f64,
     pub format: String,
-    pub granularity: String,
+    pub granularity: u32,
     pub mode: String,
     pub node_name: String,
     pub on_source_error: String,
     pub on_target_error: String,
     pub replaces: String,
-    pub speed: String,
+    pub speed: f64,
     pub device: String,
     pub sync: String,
     pub target: String,
 }
 impl drive_mirror {
-    pub fn new(buf_size: String,
+    pub fn new(buf_size: f64,
                format: String,
-               granularity: String,
+               granularity: u32,
                mode: String,
                node_name: String,
                on_source_error: String,
                on_target_error: String,
                replaces: String,
-               speed: String,
+               speed: f64,
                device: String,
                sync: String,
                target: String)
@@ -330,36 +330,36 @@ impl block_dirty_bitmap_clear {
 #[derive(Debug)]
 pub struct block_set_io_throttle {
     execute: String,
-    pub bps_max: String,
-    pub bps_rd_max: String,
-    pub bps_wr_max: String,
-    pub iops_max: String,
-    pub iops_rd_max: String,
-    pub iops_size: String,
-    pub iops_wr_max: String,
-    pub bps: String,
-    pub bps_rd: String,
-    pub bps_wr: String,
+    pub bps_max: f64,
+    pub bps_rd_max: f64,
+    pub bps_wr_max: f64,
+    pub iops_max: f64,
+    pub iops_rd_max: f64,
+    pub iops_size: f64,
+    pub iops_wr_max: f64,
+    pub bps: f64,
+    pub bps_rd: f64,
+    pub bps_wr: f64,
     pub device: String,
-    pub iops: String,
-    pub iops_rd: String,
-    pub iops_wr: String,
+    pub iops: f64,
+    pub iops_rd: f64,
+    pub iops_wr: f64,
 }
 impl block_set_io_throttle {
-    pub fn new(bps_max: String,
-               bps_rd_max: String,
-               bps_wr_max: String,
-               iops_max: String,
-               iops_rd_max: String,
-               iops_size: String,
-               iops_wr_max: String,
-               bps: String,
-               bps_rd: String,
-               bps_wr: String,
+    pub fn new(bps_max: f64,
+               bps_rd_max: f64,
+               bps_wr_max: f64,
+               iops_max: f64,
+               iops_rd_max: f64,
+               iops_size: f64,
+               iops_wr_max: f64,
+               bps: f64,
+               bps_rd: f64,
+               bps_wr: f64,
                device: String,
-               iops: String,
-               iops_rd: String,
-               iops_wr: String)
+               iops: f64,
+               iops_rd: f64,
+               iops_wr: f64)
                -> block_set_io_throttle {
         block_set_io_throttle {
             execute: "block_set_io_throttle".to_string(),
@@ -387,14 +387,14 @@ pub struct block_stream {
     pub backing_file: String,
     pub base: String,
     pub on_error: String,
-    pub speed: String,
+    pub speed: f64,
     pub device: String,
 }
 impl block_stream {
     pub fn new(backing_file: String,
                base: String,
                on_error: String,
-               speed: String,
+               speed: f64,
                device: String)
                -> block_stream {
         block_stream {
@@ -412,10 +412,10 @@ impl block_stream {
 pub struct block_job_set_speed {
     execute: String,
     pub device: String,
-    pub speed: String,
+    pub speed: f64,
 }
 impl block_job_set_speed {
-    pub fn new(device: String, speed: String) -> block_job_set_speed {
+    pub fn new(device: String, speed: f64) -> block_job_set_speed {
         block_job_set_speed {
             execute: "block_job_set_speed".to_string(),
             device: device,
@@ -427,11 +427,11 @@ impl block_job_set_speed {
 #[derive(Debug)]
 pub struct block_job_cancel {
     execute: String,
-    pub force: String,
+    pub force: bool,
     pub device: String,
 }
 impl block_job_cancel {
-    pub fn new(force: String, device: String) -> block_job_cancel {
+    pub fn new(force: bool, device: String) -> block_job_cancel {
         block_job_cancel {
             execute: "block_job_cancel".to_string(),
             force: force,
@@ -500,10 +500,10 @@ impl blockdev_add {
 pub struct block_set_write_threshold {
     execute: String,
     pub node_name: String,
-    pub write_threshold: String,
+    pub write_threshold: u64,
 }
 impl block_set_write_threshold {
-    pub fn new(node_name: String, write_threshold: String) -> block_set_write_threshold {
+    pub fn new(node_name: String, write_threshold: u64) -> block_set_write_threshold {
         block_set_write_threshold {
             execute: "block_set_write_threshold".to_string(),
             node_name: node_name,
@@ -553,12 +553,12 @@ impl trace_event_get_state {
 #[derive(Debug)]
 pub struct trace_event_set_state {
     execute: String,
-    pub ignore_unavailable: String,
-    pub enable: String,
+    pub ignore_unavailable: bool,
+    pub enable: bool,
     pub name: String,
 }
 impl trace_event_set_state {
-    pub fn new(ignore_unavailable: String, enable: String, name: String) -> trace_event_set_state {
+    pub fn new(ignore_unavailable: bool, enable: bool, name: String) -> trace_event_set_state {
         trace_event_set_state {
             execute: "trace_event_set_state".to_string(),
             ignore_unavailable: ignore_unavailable,
@@ -571,13 +571,13 @@ impl trace_event_set_state {
 #[derive(Debug)]
 pub struct add_client {
     execute: String,
-    pub skipauth: String,
-    pub tls: String,
+    pub skipauth: bool,
+    pub tls: bool,
     pub fdname: String,
     pub protocol: String,
 }
 impl add_client {
-    pub fn new(skipauth: String, tls: String, fdname: String, protocol: String) -> add_client {
+    pub fn new(skipauth: bool, tls: bool, fdname: String, protocol: String) -> add_client {
         add_client {
             execute: "add_client".to_string(),
             skipauth: skipauth,
@@ -687,10 +687,10 @@ pub struct ringbuf_read {
     execute: String,
     pub format: String,
     pub device: String,
-    pub size: String,
+    pub size: f64,
 }
 impl ringbuf_read {
-    pub fn new(format: String, device: String, size: String) -> ringbuf_read {
+    pub fn new(format: String, device: String, size: f64) -> ringbuf_read {
         ringbuf_read {
             execute: "ringbuf_read".to_string(),
             format: format,
@@ -755,14 +755,14 @@ impl query_migrate_capabilities {
 #[derive(Debug)]
 pub struct migrate_set_parameters {
     execute: String,
-    pub compress_level: String,
-    pub compress_threads: String,
-    pub decompress_threads: String,
+    pub compress_level: f64,
+    pub compress_threads: f64,
+    pub decompress_threads: f64,
 }
 impl migrate_set_parameters {
-    pub fn new(compress_level: String,
-               compress_threads: String,
-               decompress_threads: String)
+    pub fn new(compress_level: f64,
+               compress_threads: f64,
+               decompress_threads: f64)
                -> migrate_set_parameters {
         migrate_set_parameters {
             execute: "migrate_set_parameters".to_string(),
@@ -922,10 +922,10 @@ impl system_powerdown {
 #[derive(Debug)]
 pub struct cpu {
     execute: String,
-    pub index: String,
+    pub index: f64,
 }
 impl cpu {
-    pub fn new(index: String) -> cpu {
+    pub fn new(index: f64) -> cpu {
         cpu {
             execute: "cpu".to_string(),
             index: index,
@@ -936,10 +936,10 @@ impl cpu {
 #[derive(Debug)]
 pub struct cpu_add {
     execute: String,
-    pub id: String,
+    pub id: f64,
 }
 impl cpu_add {
-    pub fn new(id: String) -> cpu_add {
+    pub fn new(id: f64) -> cpu_add {
         cpu_add {
             execute: "cpu_add".to_string(),
             id: id,
@@ -950,13 +950,13 @@ impl cpu_add {
 #[derive(Debug)]
 pub struct memsave {
     execute: String,
-    pub cpu_index: String,
+    pub cpu_index: f64,
     pub filename: String,
-    pub size: String,
-    pub val: String,
+    pub size: f64,
+    pub val: f64,
 }
 impl memsave {
-    pub fn new(cpu_index: String, filename: String, size: String, val: String) -> memsave {
+    pub fn new(cpu_index: f64, filename: String, size: f64, val: f64) -> memsave {
         memsave {
             execute: "memsave".to_string(),
             cpu_index: cpu_index,
@@ -971,11 +971,11 @@ impl memsave {
 pub struct pmemsave {
     execute: String,
     pub filename: String,
-    pub size: String,
-    pub val: String,
+    pub size: f64,
+    pub val: f64,
 }
 impl pmemsave {
-    pub fn new(filename: String, size: String, val: String) -> pmemsave {
+    pub fn new(filename: String, size: f64, val: f64) -> pmemsave {
         pmemsave {
             execute: "pmemsave".to_string(),
             filename: filename,
@@ -1019,10 +1019,10 @@ impl inject_nmi {
 pub struct set_link {
     execute: String,
     pub name: String,
-    pub up: String,
+    pub up: bool,
 }
 impl set_link {
-    pub fn new(name: String, up: String) -> set_link {
+    pub fn new(name: String, up: bool) -> set_link {
         set_link {
             execute: "set_link".to_string(),
             name: name,
@@ -1034,10 +1034,10 @@ impl set_link {
 #[derive(Debug)]
 pub struct balloon {
     execute: String,
-    pub value: String,
+    pub value: f64,
 }
 impl balloon {
-    pub fn new(value: String) -> balloon {
+    pub fn new(value: f64) -> balloon {
         balloon {
             execute: "balloon".to_string(),
             value: value,
@@ -1062,11 +1062,11 @@ impl transaction {
 #[derive(Debug)]
 pub struct human_monitor_command {
     execute: String,
-    pub cpu_index: String,
+    pub cpu_index: f64,
     pub command_line: String,
 }
 impl human_monitor_command {
-    pub fn new(cpu_index: String, command_line: String) -> human_monitor_command {
+    pub fn new(cpu_index: f64, command_line: String) -> human_monitor_command {
         human_monitor_command {
             execute: "human_monitor_command".to_string(),
             cpu_index: cpu_index,
@@ -1106,10 +1106,10 @@ impl migrate_set_downtime {
 #[derive(Debug)]
 pub struct migrate_set_speed {
     execute: String,
-    pub value: String,
+    pub value: f64,
 }
 impl migrate_set_speed {
-    pub fn new(value: String) -> migrate_set_speed {
+    pub fn new(value: f64) -> migrate_set_speed {
         migrate_set_speed {
             execute: "migrate_set_speed".to_string(),
             value: value,
@@ -1120,10 +1120,10 @@ impl migrate_set_speed {
 #[derive(Debug)]
 pub struct migrate_set_cache_size {
     execute: String,
-    pub value: String,
+    pub value: f64,
 }
 impl migrate_set_cache_size {
-    pub fn new(value: String) -> migrate_set_cache_size {
+    pub fn new(value: f64) -> migrate_set_cache_size {
         migrate_set_cache_size {
             execute: "migrate_set_cache_size".to_string(),
             value: value,
@@ -1248,11 +1248,11 @@ impl change {
 #[derive(Debug)]
 pub struct qom_list_types {
     execute: String,
-    pub qemu_abstract: String,
+    pub qemu_abstract: bool,
     pub implements: String,
 }
 impl qom_list_types {
-    pub fn new(qemu_abstract: String, implements: String) -> qom_list_types {
+    pub fn new(qemu_abstract: bool, implements: String) -> qom_list_types {
         qom_list_types {
             execute: "qom_list_types".to_string(),
             qemu_abstract: qemu_abstract,
@@ -1278,13 +1278,13 @@ impl device_list_properties {
 #[derive(Debug)]
 pub struct migrate {
     execute: String,
-    pub blk: String,
-    pub detach: String,
-    pub inc: String,
+    pub blk: bool,
+    pub detach: bool,
+    pub inc: bool,
     pub uri: String,
 }
 impl migrate {
-    pub fn new(blk: String, detach: String, inc: String, uri: String) -> migrate {
+    pub fn new(blk: bool, detach: bool, inc: bool, uri: String) -> migrate {
         migrate {
             execute: "migrate".to_string(),
             blk: blk,
@@ -1326,10 +1326,10 @@ impl xen_save_devices_state {
 #[derive(Debug)]
 pub struct xen_set_global_dirty_log {
     execute: String,
-    pub enable: String,
+    pub enable: bool,
 }
 impl xen_set_global_dirty_log {
-    pub fn new(enable: String) -> xen_set_global_dirty_log {
+    pub fn new(enable: bool) -> xen_set_global_dirty_log {
         xen_set_global_dirty_log {
             execute: "xen_set_global_dirty_log".to_string(),
             enable: enable,
@@ -1354,17 +1354,17 @@ impl device_del {
 #[derive(Debug)]
 pub struct dump_guest_memory {
     execute: String,
-    pub begin: String,
+    pub begin: f64,
     pub format: String,
-    pub length: String,
-    pub paging: String,
+    pub length: f64,
+    pub paging: bool,
     pub protocol: String,
 }
 impl dump_guest_memory {
-    pub fn new(begin: String,
+    pub fn new(begin: f64,
                format: String,
-               length: String,
-               paging: String,
+               length: f64,
+               paging: bool,
                protocol: String)
                -> dump_guest_memory {
         dump_guest_memory {
@@ -1513,11 +1513,11 @@ impl query_cpu_definitions {
 #[derive(Debug)]
 pub struct add_fd {
     execute: String,
-    pub fdset_id: String,
+    pub fdset_id: f64,
     pub opaque: String,
 }
 impl add_fd {
-    pub fn new(fdset_id: String, opaque: String) -> add_fd {
+    pub fn new(fdset_id: f64, opaque: String) -> add_fd {
         add_fd {
             execute: "add_fd".to_string(),
             fdset_id: fdset_id,
@@ -1533,11 +1533,11 @@ impl add_fd {
 #[derive(Debug)]
 pub struct remove_fd {
     execute: String,
-    pub fd: String,
-    pub fdset_id: String,
+    pub fd: f64,
+    pub fdset_id: f64,
 }
 impl remove_fd {
-    pub fn new(fd: String, fdset_id: String) -> remove_fd {
+    pub fn new(fd: f64, fdset_id: f64) -> remove_fd {
         remove_fd {
             execute: "remove_fd".to_string(),
             fd: fd,
@@ -1573,11 +1573,11 @@ impl query_target {
 #[derive(Debug)]
 pub struct send_key {
     execute: String,
-    pub hold_time: String,
+    pub hold_time: f64,
     pub keys: Vec<String>,
 }
 impl send_key {
-    pub fn new(hold_time: String, keys: Vec<String>) -> send_key {
+    pub fn new(hold_time: f64, keys: Vec<String>) -> send_key {
         send_key {
             execute: "send_key".to_string(),
             hold_time: hold_time,
@@ -1695,11 +1695,11 @@ impl query_rx_filter {
 #[derive(Debug)]
 pub struct x_input_send_event {
     execute: String,
-    pub console: String,
+    pub console: f64,
     pub events: Vec<String>,
 }
 impl x_input_send_event {
-    pub fn new(console: String, events: Vec<String>) -> x_input_send_event {
+    pub fn new(console: f64, events: Vec<String>) -> x_input_send_event {
         x_input_send_event {
             execute: "x_input_send_event".to_string(),
             console: console,

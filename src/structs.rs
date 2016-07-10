@@ -6,73 +6,124 @@ pub struct BlockdevSnapshotInternal {
 }
 
 #[derive(Debug, RustcDecodable)]
+pub struct SnapshotInfo {
+    pub date_nsec: f64,
+    pub date_sec: f64,
+    pub id: String,
+    pub name: String,
+    pub vm_clock_nsec: f64,
+    pub vm_clock_sec: f64,
+    pub vm_state_size: f64,
+}
+
+#[derive(Debug, RustcDecodable)]
 pub struct ImageInfoSpecificQCow2 {
-    pub corrupt: String,
-    pub lazy_refcounts: String,
+    pub corrupt: bool,
+    pub lazy_refcounts: bool,
     pub compat: String,
-    pub refcount_bits: String,
+    pub refcount_bits: f64,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct ImageInfoSpecificVmdk {
-    pub cid: String,
+    pub cid: f64,
     pub create_type: String,
     pub extents: Vec<String>,
-    pub parent_cid: String,
+    pub parent_cid: f64,
+}
+
+#[derive(Debug)]
+pub struct ImageInfoSpecific {
+    pub qcow2: String,
+    pub vmdk: String,
+}
+
+#[derive(Debug, RustcDecodable)]
+pub struct ImageInfo {
+    pub actual_size: f64,
+    pub backing_filename: String,
+    pub backing_filename_format: String,
+    pub backing_image: String,
+    pub cluster_size: f64,
+    pub compressed: bool,
+    pub dirty_flag: bool,
+    pub encrypted: bool,
+    pub format_specific: String,
+    pub full_backing_filename: String,
+    pub snapshots: Vec<String>,
+    pub filename: String,
+    pub format: String,
+    pub virtual_size: f64,
+}
+
+#[derive(Debug, RustcDecodable)]
+pub struct ImageCheck {
+    pub allocated_clusters: f64,
+    pub compressed_clusters: f64,
+    pub corruptions: f64,
+    pub corruptions_fixed: f64,
+    pub fragmented_clusters: f64,
+    pub image_end_offset: f64,
+    pub leaks: f64,
+    pub leaks_fixed: f64,
+    pub total_clusters: f64,
+    pub check_errors: f64,
+    pub filename: String,
+    pub format: String,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct BlockdevCacheInfo {
-    pub direct: String,
-    pub no_flush: String,
-    pub writeback: String,
+    pub direct: bool,
+    pub no_flush: bool,
+    pub writeback: bool,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct BlockDeviceInfo {
     pub backing_file: String,
-    pub bps_max: String,
-    pub bps_rd_max: String,
-    pub bps_wr_max: String,
-    pub iops_max: String,
-    pub iops_rd_max: String,
-    pub iops_size: String,
-    pub iops_wr_max: String,
+    pub bps_max: f64,
+    pub bps_rd_max: f64,
+    pub bps_wr_max: f64,
+    pub iops_max: f64,
+    pub iops_rd_max: f64,
+    pub iops_size: f64,
+    pub iops_wr_max: f64,
     pub node_name: String,
-    pub backing_file_depth: String,
-    pub bps: String,
-    pub bps_rd: String,
-    pub bps_wr: String,
+    pub backing_file_depth: f64,
+    pub bps: f64,
+    pub bps_rd: f64,
+    pub bps_wr: f64,
     pub cache: String,
     pub detect_zeroes: String,
     pub drv: String,
-    pub encrypted: String,
-    pub encryption_key_missing: String,
+    pub encrypted: bool,
+    pub encryption_key_missing: bool,
     pub file: String,
     pub image: String,
-    pub iops: String,
-    pub iops_rd: String,
-    pub iops_wr: String,
-    pub ro: String,
-    pub write_threshold: String,
+    pub iops: f64,
+    pub iops_rd: f64,
+    pub iops_wr: f64,
+    pub ro: bool,
+    pub write_threshold: f64,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct BlockDeviceMapEntry {
-    pub offset: String,
-    pub data: String,
-    pub depth: String,
-    pub length: String,
-    pub start: String,
-    pub zero: String,
+    pub offset: f64,
+    pub data: bool,
+    pub depth: f64,
+    pub length: f64,
+    pub start: f64,
+    pub zero: bool,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct BlockDirtyInfo {
     pub name: String,
-    pub count: String,
-    pub frozen: String,
-    pub granularity: String,
+    pub count: f64,
+    pub frozen: bool,
+    pub granularity: u32,
 }
 
 #[derive(Debug, RustcDecodable)]
@@ -80,26 +131,26 @@ pub struct BlockInfo {
     pub dirty_bitmaps: Vec<String>,
     pub inserted: String,
     pub io_status: String,
-    pub tray_open: String,
+    pub tray_open: bool,
     pub device: String,
-    pub locked: String,
-    pub removable: String,
+    pub locked: bool,
+    pub removable: bool,
     pub qemu_type: String,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct BlockDeviceStats {
-    pub flush_operations: String,
-    pub flush_total_time_ns: String,
-    pub rd_bytes: String,
-    pub rd_merged: String,
-    pub rd_operations: String,
-    pub rd_total_time_ns: String,
-    pub wr_bytes: String,
-    pub wr_highest_offset: String,
-    pub wr_merged: String,
-    pub wr_operations: String,
-    pub wr_total_time_ns: String,
+    pub flush_operations: f64,
+    pub flush_total_time_ns: f64,
+    pub rd_bytes: f64,
+    pub rd_merged: f64,
+    pub rd_operations: f64,
+    pub rd_total_time_ns: f64,
+    pub wr_bytes: f64,
+    pub wr_highest_offset: f64,
+    pub wr_merged: f64,
+    pub wr_operations: f64,
+    pub wr_total_time_ns: f64,
 }
 
 #[derive(Debug, RustcDecodable)]
@@ -113,14 +164,14 @@ pub struct BlockStats {
 
 #[derive(Debug, RustcDecodable)]
 pub struct BlockJobInfo {
-    pub busy: String,
+    pub busy: bool,
     pub device: String,
     pub io_status: String,
-    pub len: String,
-    pub offset: String,
-    pub paused: String,
-    pub ready: String,
-    pub speed: String,
+    pub len: f64,
+    pub offset: f64,
+    pub paused: bool,
+    pub ready: bool,
+    pub speed: f64,
     pub qemu_type: String,
 }
 
@@ -141,7 +192,7 @@ pub struct DriveBackup {
     pub mode: String,
     pub on_source_error: String,
     pub on_target_error: String,
-    pub speed: String,
+    pub speed: f64,
     pub device: String,
     pub sync: String,
     pub target: String,
@@ -151,7 +202,7 @@ pub struct DriveBackup {
 pub struct BlockdevBackup {
     pub on_source_error: String,
     pub on_target_error: String,
-    pub speed: String,
+    pub speed: f64,
     pub device: String,
     pub sync: String,
     pub target: String,
@@ -165,16 +216,16 @@ pub struct BlockDirtyBitmap {
 
 #[derive(Debug, RustcDecodable)]
 pub struct BlockDirtyBitmapAdd {
-    pub granularity: String,
+    pub granularity: u32,
     pub name: String,
     pub node: String,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct BlockdevCacheOptions {
-    pub direct: String,
-    pub no_flush: String,
-    pub writeback: String,
+    pub direct: bool,
+    pub no_flush: bool,
+    pub writeback: bool,
 }
 
 #[derive(Debug, RustcDecodable)]
@@ -185,7 +236,7 @@ pub struct BlockdevOptionsBase {
     pub discard: String,
     pub id: String,
     pub node_name: String,
-    pub read_only: String,
+    pub read_only: bool,
     pub rerror: String,
     pub werror: String,
     pub driver: String,
@@ -198,15 +249,15 @@ pub struct BlockdevOptionsFile {
 
 #[derive(Debug, RustcDecodable)]
 pub struct BlockdevOptionsNull {
-    pub latency_ns: String,
-    pub size: String,
+    pub latency_ns: u64,
+    pub size: f64,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct BlockdevOptionsVVFAT {
-    pub fat_type: String,
-    pub floppy: String,
-    pub rw: String,
+    pub fat_type: f64,
+    pub floppy: bool,
+    pub rw: bool,
     pub dir: String,
 }
 
@@ -223,58 +274,58 @@ pub struct BlockdevOptionsGenericCOWFormat {
 
 #[derive(Debug, RustcDecodable)]
 pub struct Qcow2OverlapCheckFlags {
-    pub active_l1: String,
-    pub active_l2: String,
-    pub inactive_l1: String,
-    pub inactive_l2: String,
-    pub main_header: String,
-    pub refcount_block: String,
-    pub refcount_table: String,
-    pub snapshot_table: String,
+    pub active_l1: bool,
+    pub active_l2: bool,
+    pub inactive_l1: bool,
+    pub inactive_l2: bool,
+    pub main_header: bool,
+    pub refcount_block: bool,
+    pub refcount_table: bool,
+    pub snapshot_table: bool,
     pub template: String,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct BlockdevOptionsQcow2 {
     base: BlockdevOptionsGenericCOWFormat,
-    pub cache_size: String,
-    pub l2_cache_size: String,
-    pub lazy_refcounts: String,
+    pub cache_size: f64,
+    pub l2_cache_size: f64,
+    pub lazy_refcounts: bool,
     pub overlap_check: String,
-    pub pass_discard_other: String,
-    pub pass_discard_request: String,
-    pub pass_discard_snapshot: String,
-    pub refcount_cache_size: String,
+    pub pass_discard_other: bool,
+    pub pass_discard_request: bool,
+    pub pass_discard_snapshot: bool,
+    pub refcount_cache_size: f64,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct BlockdevOptionsArchipelago {
-    pub mport: String,
+    pub mport: f64,
     pub segment: String,
-    pub vport: String,
+    pub vport: f64,
     pub volume: String,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct BlkdebugInjectErrorOptions {
-    pub errno: String,
-    pub immediately: String,
-    pub once: String,
-    pub sector: String,
-    pub state: String,
+    pub errno: f64,
+    pub immediately: bool,
+    pub once: bool,
+    pub sector: f64,
+    pub state: f64,
     pub event: String,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct BlkdebugSetStateOptions {
-    pub state: String,
+    pub state: f64,
     pub event: String,
-    pub new_state: String,
+    pub new_state: f64,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct BlockdevOptionsBlkdebug {
-    pub align: String,
+    pub align: f64,
     pub config: String,
     pub inject_error: Vec<String>,
     pub set_state: Vec<String>,
@@ -289,11 +340,11 @@ pub struct BlockdevOptionsBlkverify {
 
 #[derive(Debug, RustcDecodable)]
 pub struct BlockdevOptionsQuorum {
-    pub blkverify: String,
+    pub blkverify: bool,
     pub read_pattern: String,
-    pub rewrite_corrupted: String,
+    pub rewrite_corrupted: bool,
     pub children: Vec<String>,
-    pub vote_threshold: String,
+    pub vote_threshold: f64,
 }
 
 #[derive(Debug)]
@@ -330,9 +381,9 @@ pub struct BlockdevOptions {
 
 #[derive(Debug, RustcDecodable)]
 pub struct VersionTriple {
-    pub major: String,
-    pub micro: String,
-    pub minor: String,
+    pub major: f64,
+    pub micro: f64,
+    pub minor: f64,
 }
 
 #[derive(Debug, RustcDecodable)]
@@ -359,14 +410,14 @@ pub struct NameInfo {
 
 #[derive(Debug, RustcDecodable)]
 pub struct KvmInfo {
-    pub enabled: String,
-    pub present: String,
+    pub enabled: bool,
+    pub present: bool,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct StatusInfo {
-    pub running: String,
-    pub singlestep: String,
+    pub running: bool,
+    pub singlestep: bool,
     pub status: String,
 }
 
@@ -378,7 +429,7 @@ pub struct UuidInfo {
 #[derive(Debug, RustcDecodable)]
 pub struct ChardevInfo {
     pub filename: String,
-    pub frontend_open: String,
+    pub frontend_open: bool,
     pub label: String,
 }
 
@@ -394,78 +445,78 @@ pub struct EventInfo {
 
 #[derive(Debug, RustcDecodable)]
 pub struct MigrationStats {
-    pub dirty_pages_rate: String,
-    pub dirty_sync_count: String,
-    pub duplicate: String,
+    pub dirty_pages_rate: f64,
+    pub dirty_sync_count: f64,
+    pub duplicate: f64,
     pub mbps: String,
-    pub normal: String,
-    pub normal_bytes: String,
-    pub remaining: String,
-    pub skipped: String,
-    pub total: String,
-    pub transferred: String,
+    pub normal: f64,
+    pub normal_bytes: f64,
+    pub remaining: f64,
+    pub skipped: f64,
+    pub total: f64,
+    pub transferred: f64,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct XBZRLECacheStats {
-    pub bytes: String,
-    pub cache_miss: String,
+    pub bytes: f64,
+    pub cache_miss: f64,
     pub cache_miss_rate: String,
-    pub cache_size: String,
-    pub overflow: String,
-    pub pages: String,
+    pub cache_size: f64,
+    pub overflow: f64,
+    pub pages: f64,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct MigrationInfo {
     pub disk: String,
-    pub downtime: String,
-    pub expected_downtime: String,
+    pub downtime: f64,
+    pub expected_downtime: f64,
     pub ram: String,
-    pub setup_time: String,
+    pub setup_time: f64,
     pub status: String,
-    pub total_time: String,
+    pub total_time: f64,
     pub xbzrle_cache: String,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct MigrationCapabilityStatus {
     pub capability: String,
-    pub state: String,
+    pub state: bool,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct MigrationParameters {
-    pub compress_level: String,
-    pub compress_threads: String,
-    pub decompress_threads: String,
+    pub compress_level: f64,
+    pub compress_threads: f64,
+    pub decompress_threads: f64,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct MouseInfo {
-    pub absolute: String,
-    pub current: String,
-    pub index: String,
+    pub absolute: bool,
+    pub current: bool,
+    pub index: f64,
     pub name: String,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct CpuInfo {
-    pub PC: String,
-    pub nip: String,
-    pub npc: String,
-    pub pc: String,
-    pub CPU: String,
-    pub current: String,
-    pub halted: String,
+    pub PC: f64,
+    pub nip: f64,
+    pub npc: f64,
+    pub pc: f64,
+    pub CPU: f64,
+    pub current: bool,
+    pub halted: bool,
     pub qom_path: String,
-    pub thread_id: String,
+    pub thread_id: f64,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct IOThreadInfo {
     pub id: String,
-    pub thread_id: String,
+    pub thread_id: f64,
 }
 
 #[derive(Debug, RustcDecodable)]
@@ -473,7 +524,7 @@ pub struct VncBasicInfo {
     pub family: String,
     pub host: String,
     pub service: String,
-    pub websocket: String,
+    pub websocket: bool,
 }
 
 #[derive(Debug, RustcDecodable)]
@@ -496,7 +547,7 @@ pub struct VncInfo {
     pub family: String,
     pub host: String,
     pub service: String,
-    pub enabled: String,
+    pub enabled: bool,
 }
 
 #[derive(Debug, RustcDecodable)]
@@ -525,10 +576,10 @@ pub struct SpiceServerInfo {
 #[derive(Debug, RustcDecodable)]
 pub struct SpiceChannel {
     base: SpiceBasicInfo,
-    pub channel_id: String,
-    pub channel_type: String,
-    pub connection_id: String,
-    pub tls: String,
+    pub channel_id: f64,
+    pub channel_type: f64,
+    pub connection_id: f64,
+    pub tls: bool,
 }
 
 #[derive(Debug, RustcDecodable)]
@@ -537,31 +588,31 @@ pub struct SpiceInfo {
     pub channels: Vec<String>,
     pub compiled_version: String,
     pub host: String,
-    pub port: String,
-    pub tls_port: String,
-    pub enabled: String,
-    pub migrated: String,
+    pub port: f64,
+    pub tls_port: f64,
+    pub enabled: bool,
+    pub migrated: bool,
     pub mouse_mode: String,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct BalloonInfo {
-    pub actual: String,
+    pub actual: f64,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct PciMemoryRange {
-    pub base: String,
-    pub limit: String,
+    pub base: f64,
+    pub limit: f64,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct PciMemoryRegion {
-    pub mem_type_64: String,
-    pub prefetch: String,
-    pub address: String,
-    pub bar: String,
-    pub size: String,
+    pub mem_type_64: bool,
+    pub prefetch: bool,
+    pub address: f64,
+    pub bar: f64,
+    pub size: f64,
     pub qemu_type: String,
 }
 
@@ -569,10 +620,10 @@ pub struct PciMemoryRegion {
 pub struct PciBusInfo {
     pub io_range: String,
     pub memory_range: String,
-    pub number: String,
+    pub number: f64,
     pub prefetchable_range: String,
-    pub secondary: String,
-    pub subordinate: String,
+    pub secondary: f64,
+    pub subordinate: f64,
 }
 
 #[derive(Debug, RustcDecodable)]
@@ -584,31 +635,31 @@ pub struct PciBridgeInfo {
 #[derive(Debug, RustcDecodable)]
 pub struct PciDeviceClass {
     pub desc: String,
-    pub class: String,
+    pub class: f64,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct PciDeviceId {
-    pub device: String,
-    pub vendor: String,
+    pub device: f64,
+    pub vendor: f64,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct PciDeviceInfo {
-    pub irq: String,
+    pub irq: f64,
     pub pci_bridge: String,
-    pub bus: String,
+    pub bus: f64,
     pub class_info: String,
-    pub function: String,
+    pub function: f64,
     pub id: String,
     pub qdev_id: String,
     pub regions: Vec<String>,
-    pub slot: String,
+    pub slot: f64,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct PciInfo {
-    pub bus: String,
+    pub bus: f64,
     pub devices: Vec<String>,
 }
 
@@ -660,7 +711,7 @@ pub struct NetLegacyNicOptions {
     pub macaddr: String,
     pub model: String,
     pub netdev: String,
-    pub vectors: String,
+    pub vectors: u32,
 }
 
 #[derive(Debug, RustcDecodable)]
@@ -680,7 +731,7 @@ pub struct NetdevUserOptions {
     pub hostname: String,
     pub ip: String,
     pub net: String,
-    pub restrict: String,
+    pub restrict: bool,
     pub smb: String,
     pub smbserver: String,
     pub tftp: String,
@@ -693,14 +744,14 @@ pub struct NetdevTapOptions {
     pub fds: String,
     pub helper: String,
     pub ifname: String,
-    pub queues: String,
+    pub queues: u32,
     pub script: String,
     pub sndbuf: String,
-    pub vhost: String,
+    pub vhost: bool,
     pub vhostfd: String,
     pub vhostfds: String,
-    pub vhostforce: String,
-    pub vnet_hdr: String,
+    pub vhostforce: bool,
+    pub vnet_hdr: bool,
 }
 
 #[derive(Debug, RustcDecodable)]
@@ -715,20 +766,20 @@ pub struct NetdevSocketOptions {
 
 #[derive(Debug, RustcDecodable)]
 pub struct NetdevL2TPv3Options {
-    pub cookie64: String,
-    pub counter: String,
+    pub cookie64: bool,
+    pub counter: bool,
     pub dstport: String,
-    pub ipv6: String,
-    pub offset: String,
-    pub pincounter: String,
-    pub rxcookie: String,
-    pub rxsession: String,
+    pub ipv6: bool,
+    pub offset: u32,
+    pub pincounter: bool,
+    pub rxcookie: u64,
+    pub rxsession: u32,
     pub srcport: String,
-    pub txcookie: String,
-    pub udp: String,
+    pub txcookie: u64,
+    pub udp: bool,
     pub dst: String,
     pub src: String,
-    pub txsession: String,
+    pub txsession: u32,
 }
 
 #[derive(Debug, RustcDecodable)]
@@ -764,7 +815,7 @@ pub struct NetdevNetmapOptions {
 
 #[derive(Debug, RustcDecodable)]
 pub struct NetdevVhostUserOptions {
-    pub vhostforce: String,
+    pub vhostforce: bool,
     pub chardev: String,
 }
 
@@ -800,8 +851,8 @@ pub struct Netdev {
 
 #[derive(Debug, RustcDecodable)]
 pub struct InetSocketAddress {
-    pub ipv4: String,
-    pub ipv6: String,
+    pub ipv4: bool,
+    pub ipv6: bool,
     pub to: String,
     pub host: String,
     pub port: String,
@@ -822,8 +873,8 @@ pub struct SocketAddress {
 #[derive(Debug, RustcDecodable)]
 pub struct MachineInfo {
     pub alias: String,
-    pub is_default: String,
-    pub cpu_max: String,
+    pub is_default: bool,
+    pub cpu_max: f64,
     pub name: String,
 }
 
@@ -834,20 +885,20 @@ pub struct CpuDefinitionInfo {
 
 #[derive(Debug, RustcDecodable)]
 pub struct AddfdInfo {
-    pub fd: String,
-    pub fdset_id: String,
+    pub fd: f64,
+    pub fdset_id: f64,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct FdsetFdInfo {
     pub opaque: String,
-    pub fd: String,
+    pub fd: f64,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct FdsetInfo {
     pub fds: Vec<String>,
-    pub fdset_id: String,
+    pub fdset_id: f64,
 }
 
 #[derive(Debug, RustcDecodable)]
@@ -857,7 +908,7 @@ pub struct TargetInfo {
 
 #[derive(Debug)]
 pub struct KeyValue {
-    pub number: String,
+    pub number: f64,
     pub qcode: String,
 }
 
@@ -874,11 +925,11 @@ pub struct ChardevHostdev {
 
 #[derive(Debug, RustcDecodable)]
 pub struct ChardevSocket {
-    pub nodelay: String,
-    pub reconnect: String,
-    pub server: String,
-    pub telnet: String,
-    pub wait: String,
+    pub nodelay: bool,
+    pub reconnect: f64,
+    pub server: bool,
+    pub telnet: bool,
+    pub wait: bool,
     pub addr: String,
 }
 
@@ -895,7 +946,7 @@ pub struct ChardevMux {
 
 #[derive(Debug, RustcDecodable)]
 pub struct ChardevStdio {
-    pub signal: String,
+    pub signal: bool,
 }
 
 #[derive(Debug, RustcDecodable)]
@@ -910,15 +961,15 @@ pub struct ChardevSpicePort {
 
 #[derive(Debug, RustcDecodable)]
 pub struct ChardevVC {
-    pub cols: String,
-    pub height: String,
-    pub rows: String,
-    pub width: String,
+    pub cols: f64,
+    pub height: f64,
+    pub rows: f64,
+    pub width: f64,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct ChardevRingbuf {
-    pub size: String,
+    pub size: f64,
 }
 
 #[derive(Debug, RustcDecodable)]
@@ -975,11 +1026,11 @@ pub struct TPMInfo {
 #[derive(Debug, RustcDecodable)]
 pub struct AcpiTableOptions {
     pub asl_compiler_id: String,
-    pub asl_compiler_rev: String,
+    pub asl_compiler_rev: u32,
     pub data: String,
     pub file: String,
     pub oem_id: String,
-    pub oem_rev: String,
+    pub oem_rev: u32,
     pub oem_table_id: String,
     pub rev: String,
     pub sig: String,
@@ -1001,28 +1052,44 @@ pub struct CommandLineOptionInfo {
 
 #[derive(Debug, RustcDecodable)]
 pub struct X86CPUFeatureWordInfo {
-    pub cpuid_input_ecx: String,
-    pub cpuid_input_eax: String,
+    pub cpuid_input_ecx: f64,
+    pub cpuid_input_eax: f64,
     pub cpuid_register: String,
-    pub features: String,
+    pub features: f64,
+}
+
+#[derive(Debug, RustcDecodable)]
+pub struct RxFilterInfo {
+    pub broadcast_allowed: bool,
+    pub main_mac: String,
+    pub multicast: String,
+    pub multicast_overflow: bool,
+    pub multicast_table: Vec<String>,
+    pub name: String,
+    pub promiscuous: bool,
+    pub unicast: String,
+    pub unicast_overflow: bool,
+    pub unicast_table: Vec<String>,
+    pub vlan: String,
+    pub vlan_table: Vec<String>,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct InputKeyEvent {
-    pub down: String,
+    pub down: bool,
     pub key: String,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct InputBtnEvent {
     pub button: String,
-    pub down: String,
+    pub down: bool,
 }
 
 #[derive(Debug, RustcDecodable)]
 pub struct InputMoveEvent {
     pub axis: String,
-    pub value: String,
+    pub value: f64,
 }
 
 #[derive(Debug)]
@@ -1047,15 +1114,25 @@ pub struct NumaNodeOptions {
 }
 
 #[derive(Debug, RustcDecodable)]
+pub struct Memdev {
+    pub dump: bool,
+    pub host_nodes: Vec<String>,
+    pub merge: bool,
+    pub policy: String,
+    pub prealloc: bool,
+    pub size: String,
+}
+
+#[derive(Debug, RustcDecodable)]
 pub struct PCDIMMDeviceInfo {
     pub id: String,
-    pub addr: String,
-    pub hotpluggable: String,
-    pub hotplugged: String,
+    pub addr: f64,
+    pub hotpluggable: bool,
+    pub hotplugged: bool,
     pub memdev: String,
-    pub node: String,
-    pub size: String,
-    pub slot: String,
+    pub node: f64,
+    pub size: f64,
+    pub slot: f64,
 }
 
 #[derive(Debug)]
@@ -1068,6 +1145,6 @@ pub struct ACPIOSTInfo {
     pub device: String,
     pub slot: String,
     pub slot_type: String,
-    pub source: String,
-    pub status: String,
+    pub source: f64,
+    pub status: f64,
 }

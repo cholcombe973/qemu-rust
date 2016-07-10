@@ -7,9 +7,11 @@ use std::collections::HashMap;
 use bytes::{Buf, ByteBuf, MutByteBuf};
 use mio::*;
 use mio::tcp::TcpStream;
+use QemuCmd;
 
 use std::io;
 
+#[derive(Debug,PartialEq,Eq)]
 enum ClientState {
     ReadyForGreeting,
     ReadyForCapabilities,
@@ -132,6 +134,21 @@ impl QApiConnection {
             token: Token(1),
             interest: EventSet::none(),
             state: ClientState::ReadyForGreeting,
+        }
+    }
+
+    /// Run a Qemu command
+    pub fn run_command<T: QemuCmd>(&self, cmd: T) -> Result<T, String> {
+        // Take anything from the commands.rs file  that implements QemuCmd and
+        // return whatever it returns by parsing the json response
+        let json_cmd = cmd.to_json();
+        if self.state == ClientState::Ready {
+            // Queue up this stuff and send it off
+            // Parse the response and send back to the user
+            let result = cmd.parse_qemu_response(&"".to_string()).unwrap();
+            Ok(result)
+        } else {
+            Err(format!("Invalid ClientState of {:?}", self.state))
         }
     }
 

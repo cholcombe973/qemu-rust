@@ -3,24 +3,24 @@
 pub struct DEVICE_TRAY_MOVED {
     execute: String,
     pub device: String,
-    pub tray_open: String,
+    pub tray_open: bool,
 }
 
 #[derive(Debug)]
 pub struct BLOCK_IMAGE_CORRUPTED {
     execute: String,
     pub node_name: String,
-    pub offset: String,
-    pub size: String,
+    pub offset: f64,
+    pub size: f64,
     pub device: String,
-    pub fatal: String,
+    pub fatal: bool,
     pub msg: String,
 }
 
 #[derive(Debug)]
 pub struct BLOCK_IO_ERROR {
     execute: String,
-    pub nospace: String,
+    pub nospace: bool,
     pub action: String,
     pub device: String,
     pub operation: String,
@@ -32,9 +32,9 @@ pub struct BLOCK_JOB_COMPLETED {
     execute: String,
     pub error: String,
     pub device: String,
-    pub len: String,
-    pub offset: String,
-    pub speed: String,
+    pub len: f64,
+    pub offset: f64,
+    pub speed: f64,
     pub qemu_type: String,
 }
 
@@ -42,9 +42,9 @@ pub struct BLOCK_JOB_COMPLETED {
 pub struct BLOCK_JOB_CANCELLED {
     execute: String,
     pub device: String,
-    pub len: String,
-    pub offset: String,
-    pub speed: String,
+    pub len: f64,
+    pub offset: f64,
+    pub speed: f64,
     pub qemu_type: String,
 }
 
@@ -60,18 +60,18 @@ pub struct BLOCK_JOB_ERROR {
 pub struct BLOCK_JOB_READY {
     execute: String,
     pub device: String,
-    pub len: String,
-    pub offset: String,
-    pub speed: String,
+    pub len: f64,
+    pub offset: f64,
+    pub speed: f64,
     pub qemu_type: String,
 }
 
 #[derive(Debug)]
 pub struct BLOCK_WRITE_THRESHOLD {
     execute: String,
-    pub amount_exceeded: String,
+    pub amount_exceeded: u64,
     pub node_name: String,
-    pub write_threshold: String,
+    pub write_threshold: u64,
 }
 
 #[derive(Debug)]
@@ -117,7 +117,7 @@ pub struct WAKEUP {
 #[derive(Debug)]
 pub struct RTC_CHANGE {
     execute: String,
-    pub offset: String,
+    pub offset: f64,
 }
 
 #[derive(Debug)]
@@ -196,7 +196,7 @@ pub struct ACPI_DEVICE_OST {
 #[derive(Debug)]
 pub struct BALLOON_CHANGE {
     execute: String,
-    pub actual: String,
+    pub actual: f64,
 }
 
 #[derive(Debug)]
@@ -209,8 +209,8 @@ pub struct GUEST_PANICKED {
 pub struct QUORUM_FAILURE {
     execute: String,
     pub reference: String,
-    pub sector_num: String,
-    pub sectors_count: String,
+    pub sector_num: f64,
+    pub sectors_count: f64,
 }
 
 #[derive(Debug)]
@@ -218,15 +218,15 @@ pub struct QUORUM_REPORT_BAD {
     execute: String,
     pub error: String,
     pub node_name: String,
-    pub sector_num: String,
-    pub sectors_count: String,
+    pub sector_num: f64,
+    pub sectors_count: f64,
 }
 
 #[derive(Debug)]
 pub struct VSERPORT_CHANGE {
     execute: String,
     pub id: String,
-    pub open: String,
+    pub open: bool,
 }
 
 #[derive(Debug)]
