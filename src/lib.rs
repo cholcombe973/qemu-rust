@@ -12,10 +12,11 @@ use mio::{EventLoop, EventSet, PollOpt, Token};
 use mio::tcp::TcpStream;
 
 pub mod commands;
-mod enums;
-mod events;
-mod qapi_connection;
-mod structs;
+pub mod qapi_connection;
+
+pub mod enums;
+pub mod structs;
+pub mod events;
 
 trait QemuCmd<T> {
     // Return a json blob that we can send to the Qemu Server
