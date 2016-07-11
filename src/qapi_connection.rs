@@ -1,6 +1,7 @@
 extern crate bytes;
 extern crate json;
 extern crate mio;
+extern crate rustc_serialize;
 
 use std::collections::HashMap;
 
@@ -138,7 +139,9 @@ impl QApiConnection {
     }
 
     /// Run a Qemu command
-    pub fn run_command<T: QemuCmd>(&self, cmd: T) -> Result<T, String> {
+    pub fn run_command<E, T: rustc_serialize::Decodable>(&self, cmd: E) -> Result<T, String>
+        where E: QemuCmd<T>
+    {
         // Take anything from the commands.rs file  that implements QemuCmd and
         // return whatever it returns by parsing the json response
         let json_cmd = cmd.to_json();

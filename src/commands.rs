@@ -1,21 +1,38 @@
-use rustc_serialize::json;
+use QemuCmd;
+use rustc_serialize::json as rustc_json;
+use rustc_serialize::Decodable as rustc_decodable;
+use json;
 use events::*;
 use enums::*;
 use structs::*;
 
 #[derive(Debug)]
 pub struct blockdev_snapshot_internal_sync {
-    execute: String,
-}
+
+        }
 impl blockdev_snapshot_internal_sync {
     pub fn new() -> blockdev_snapshot_internal_sync {
-        blockdev_snapshot_internal_sync { execute: "blockdev_snapshot_internal_sync".to_string() }
+        blockdev_snapshot_internal_sync {}
+    }
+}
+impl<T> QemuCmd<T> for blockdev_snapshot_internal_sync {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "blockdev-snapshot-internal-sync".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct blockdev_snapshot_delete_internal_sync {
-    execute: String,
     pub id: String,
     pub name: String,
     pub device: String,
@@ -23,111 +40,220 @@ pub struct blockdev_snapshot_delete_internal_sync {
 impl blockdev_snapshot_delete_internal_sync {
     pub fn new(id: String, name: String, device: String) -> blockdev_snapshot_delete_internal_sync {
         blockdev_snapshot_delete_internal_sync {
-            execute: "blockdev_snapshot_delete_internal_sync".to_string(),
             id: id,
             name: name,
             device: device,
         }
     }
+}
+impl<T> QemuCmd<T> for blockdev_snapshot_delete_internal_sync {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "blockdev-snapshot-delete-internal-sync".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["blockdev-snapshot-delete-internal-sync"]["arguments"]["id"] =
+            self.id.clone().into();
+        to_json["blockdev-snapshot-delete-internal-sync"]["arguments"]["name"] =
+            self.name.clone().into();
+        to_json["blockdev-snapshot-delete-internal-sync"]["arguments"]["device"] =
+            self.device.clone().into();
+        to_json.dump()
+    }
 
-    pub fn parse_qemu_response(response: &String) -> Result<SnapshotInfo, String> {
-        Ok(json::decode(&response).unwrap())
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct eject {
-    execute: String,
     pub force: bool,
     pub device: String,
 }
 impl eject {
     pub fn new(force: bool, device: String) -> eject {
         eject {
-            execute: "eject".to_string(),
             force: force,
             device: device,
         }
     }
 }
+impl<T> QemuCmd<T> for eject {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "eject".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["eject"]["arguments"]["force"] = self.force.clone().into();
+        to_json["eject"]["arguments"]["device"] = self.device.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct nbd_server_start {
-    execute: String,
     pub addr: String,
 }
 impl nbd_server_start {
     pub fn new(addr: String) -> nbd_server_start {
-        nbd_server_start {
-            execute: "nbd_server_start".to_string(),
-            addr: addr,
-        }
+        nbd_server_start { addr: addr }
+    }
+}
+impl<T> QemuCmd<T> for nbd_server_start {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "nbd-server-start".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["nbd-server-start"]["arguments"]["addr"] = self.addr.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct nbd_server_add {
-    execute: String,
     pub writable: bool,
     pub device: String,
 }
 impl nbd_server_add {
     pub fn new(writable: bool, device: String) -> nbd_server_add {
         nbd_server_add {
-            execute: "nbd_server_add".to_string(),
             writable: writable,
             device: device,
         }
     }
 }
+impl<T> QemuCmd<T> for nbd_server_add {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "nbd-server-add".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["nbd-server-add"]["arguments"]["writable"] = self.writable.clone().into();
+        to_json["nbd-server-add"]["arguments"]["device"] = self.device.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct nbd_server_stop {
-    execute: String,
-}
+
+        }
 impl nbd_server_stop {
     pub fn new() -> nbd_server_stop {
-        nbd_server_stop { execute: "nbd_server_stop".to_string() }
+        nbd_server_stop {}
+    }
+}
+impl<T> QemuCmd<T> for nbd_server_stop {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "nbd-server-stop".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_block {
-    execute: String,
-}
+
+        }
 impl query_block {
     pub fn new() -> query_block {
-        query_block { execute: "query_block".to_string() }
+        query_block {}
+    }
+}
+impl<T> QemuCmd<T> for query_block {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-block".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_blockstats {
-    execute: String,
     pub query_nodes: bool,
 }
 impl query_blockstats {
     pub fn new(query_nodes: bool) -> query_blockstats {
-        query_blockstats {
-            execute: "query_blockstats".to_string(),
-            query_nodes: query_nodes,
-        }
+        query_blockstats { query_nodes: query_nodes }
+    }
+}
+impl<T> QemuCmd<T> for query_blockstats {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-blockstats".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["query-blockstats"]["arguments"]["query_nodes"] = self.query_nodes.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_block_jobs {
-    execute: String,
-}
+
+        }
 impl query_block_jobs {
     pub fn new() -> query_block_jobs {
-        query_block_jobs { execute: "query_block_jobs".to_string() }
+        query_block_jobs {}
+    }
+}
+impl<T> QemuCmd<T> for query_block_jobs {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-block-jobs".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct block_passwd {
-    execute: String,
     pub device: String,
     pub node_name: String,
     pub password: String,
@@ -135,17 +261,32 @@ pub struct block_passwd {
 impl block_passwd {
     pub fn new(device: String, node_name: String, password: String) -> block_passwd {
         block_passwd {
-            execute: "block_passwd".to_string(),
             device: device,
             node_name: node_name,
             password: password,
         }
     }
 }
+impl<T> QemuCmd<T> for block_passwd {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "block_passwd".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["block_passwd"]["arguments"]["device"] = self.device.clone().into();
+        to_json["block_passwd"]["arguments"]["node_name"] = self.node_name.clone().into();
+        to_json["block_passwd"]["arguments"]["password"] = self.password.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct block_resize {
-    execute: String,
     pub device: String,
     pub node_name: String,
     pub size: f64,
@@ -153,27 +294,57 @@ pub struct block_resize {
 impl block_resize {
     pub fn new(device: String, node_name: String, size: f64) -> block_resize {
         block_resize {
-            execute: "block_resize".to_string(),
             device: device,
             node_name: node_name,
             size: size,
         }
     }
 }
+impl<T> QemuCmd<T> for block_resize {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "block_resize".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["block_resize"]["arguments"]["device"] = self.device.clone().into();
+        to_json["block_resize"]["arguments"]["node_name"] = self.node_name.clone().into();
+        to_json["block_resize"]["arguments"]["size"] = self.size.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct blockdev_snapshot_sync {
-    execute: String,
-}
+
+        }
 impl blockdev_snapshot_sync {
     pub fn new() -> blockdev_snapshot_sync {
-        blockdev_snapshot_sync { execute: "blockdev_snapshot_sync".to_string() }
+        blockdev_snapshot_sync {}
+    }
+}
+impl<T> QemuCmd<T> for blockdev_snapshot_sync {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "blockdev-snapshot-sync".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct change_backing_file {
-    execute: String,
     pub backing_file: String,
     pub device: String,
     pub image_node_name: String,
@@ -184,17 +355,34 @@ impl change_backing_file {
                image_node_name: String)
                -> change_backing_file {
         change_backing_file {
-            execute: "change_backing_file".to_string(),
             backing_file: backing_file,
             device: device,
             image_node_name: image_node_name,
         }
     }
 }
+impl<T> QemuCmd<T> for change_backing_file {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "change-backing-file".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["change-backing-file"]["arguments"]["backing_file"] =
+            self.backing_file.clone().into();
+        to_json["change-backing-file"]["arguments"]["device"] = self.device.clone().into();
+        to_json["change-backing-file"]["arguments"]["image_node_name"] =
+            self.image_node_name.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct block_commit {
-    execute: String,
     pub backing_file: String,
     pub base: String,
     pub speed: f64,
@@ -209,7 +397,6 @@ impl block_commit {
                device: String)
                -> block_commit {
         block_commit {
-            execute: "block_commit".to_string(),
             backing_file: backing_file,
             base: base,
             speed: speed,
@@ -218,40 +405,103 @@ impl block_commit {
         }
     }
 }
+impl<T> QemuCmd<T> for block_commit {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "block-commit".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["block-commit"]["arguments"]["backing_file"] = self.backing_file.clone().into();
+        to_json["block-commit"]["arguments"]["base"] = self.base.clone().into();
+        to_json["block-commit"]["arguments"]["speed"] = self.speed.clone().into();
+        to_json["block-commit"]["arguments"]["top"] = self.top.clone().into();
+        to_json["block-commit"]["arguments"]["device"] = self.device.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct drive_backup {
-    execute: String,
-}
+
+        }
 impl drive_backup {
     pub fn new() -> drive_backup {
-        drive_backup { execute: "drive_backup".to_string() }
+        drive_backup {}
+    }
+}
+impl<T> QemuCmd<T> for drive_backup {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "drive-backup".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct blockdev_backup {
-    execute: String,
-}
+
+        }
 impl blockdev_backup {
     pub fn new() -> blockdev_backup {
-        blockdev_backup { execute: "blockdev_backup".to_string() }
+        blockdev_backup {}
+    }
+}
+impl<T> QemuCmd<T> for blockdev_backup {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "blockdev-backup".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_named_block_nodes {
-    execute: String,
-}
+
+        }
 impl query_named_block_nodes {
     pub fn new() -> query_named_block_nodes {
-        query_named_block_nodes { execute: "query_named_block_nodes".to_string() }
+        query_named_block_nodes {}
+    }
+}
+impl<T> QemuCmd<T> for query_named_block_nodes {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-named-block-nodes".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct drive_mirror {
-    execute: String,
     pub buf_size: f64,
     pub format: String,
     pub granularity: u32,
@@ -280,7 +530,6 @@ impl drive_mirror {
                target: String)
                -> drive_mirror {
         drive_mirror {
-            execute: "drive_mirror".to_string(),
             buf_size: buf_size,
             format: format,
             granularity: granularity,
@@ -296,40 +545,112 @@ impl drive_mirror {
         }
     }
 }
+impl<T> QemuCmd<T> for drive_mirror {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "drive-mirror".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["drive-mirror"]["arguments"]["buf_size"] = self.buf_size.clone().into();
+        to_json["drive-mirror"]["arguments"]["format"] = self.format.clone().into();
+        to_json["drive-mirror"]["arguments"]["granularity"] = self.granularity.clone().into();
+        to_json["drive-mirror"]["arguments"]["mode"] = self.mode.clone().into();
+        to_json["drive-mirror"]["arguments"]["node_name"] = self.node_name.clone().into();
+        to_json["drive-mirror"]["arguments"]["on_source_error"] =
+            self.on_source_error.clone().into();
+        to_json["drive-mirror"]["arguments"]["on_target_error"] =
+            self.on_target_error.clone().into();
+        to_json["drive-mirror"]["arguments"]["replaces"] = self.replaces.clone().into();
+        to_json["drive-mirror"]["arguments"]["speed"] = self.speed.clone().into();
+        to_json["drive-mirror"]["arguments"]["device"] = self.device.clone().into();
+        to_json["drive-mirror"]["arguments"]["sync"] = self.sync.clone().into();
+        to_json["drive-mirror"]["arguments"]["target"] = self.target.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct block_dirty_bitmap_add {
-    execute: String,
-}
+
+        }
 impl block_dirty_bitmap_add {
     pub fn new() -> block_dirty_bitmap_add {
-        block_dirty_bitmap_add { execute: "block_dirty_bitmap_add".to_string() }
+        block_dirty_bitmap_add {}
+    }
+}
+impl<T> QemuCmd<T> for block_dirty_bitmap_add {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "block-dirty-bitmap-add".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct block_dirty_bitmap_remove {
-    execute: String,
-}
+
+        }
 impl block_dirty_bitmap_remove {
     pub fn new() -> block_dirty_bitmap_remove {
-        block_dirty_bitmap_remove { execute: "block_dirty_bitmap_remove".to_string() }
+        block_dirty_bitmap_remove {}
+    }
+}
+impl<T> QemuCmd<T> for block_dirty_bitmap_remove {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "block-dirty-bitmap-remove".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct block_dirty_bitmap_clear {
-    execute: String,
-}
+
+        }
 impl block_dirty_bitmap_clear {
     pub fn new() -> block_dirty_bitmap_clear {
-        block_dirty_bitmap_clear { execute: "block_dirty_bitmap_clear".to_string() }
+        block_dirty_bitmap_clear {}
+    }
+}
+impl<T> QemuCmd<T> for block_dirty_bitmap_clear {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "block-dirty-bitmap-clear".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct block_set_io_throttle {
-    execute: String,
     pub bps_max: f64,
     pub bps_rd_max: f64,
     pub bps_wr_max: f64,
@@ -362,7 +683,6 @@ impl block_set_io_throttle {
                iops_wr: f64)
                -> block_set_io_throttle {
         block_set_io_throttle {
-            execute: "block_set_io_throttle".to_string(),
             bps_max: bps_max,
             bps_rd_max: bps_rd_max,
             bps_wr_max: bps_wr_max,
@@ -380,10 +700,41 @@ impl block_set_io_throttle {
         }
     }
 }
+impl<T> QemuCmd<T> for block_set_io_throttle {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "block_set_io_throttle".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["block_set_io_throttle"]["arguments"]["bps_max"] = self.bps_max.clone().into();
+        to_json["block_set_io_throttle"]["arguments"]["bps_rd_max"] =
+            self.bps_rd_max.clone().into();
+        to_json["block_set_io_throttle"]["arguments"]["bps_wr_max"] =
+            self.bps_wr_max.clone().into();
+        to_json["block_set_io_throttle"]["arguments"]["iops_max"] = self.iops_max.clone().into();
+        to_json["block_set_io_throttle"]["arguments"]["iops_rd_max"] =
+            self.iops_rd_max.clone().into();
+        to_json["block_set_io_throttle"]["arguments"]["iops_size"] = self.iops_size.clone().into();
+        to_json["block_set_io_throttle"]["arguments"]["iops_wr_max"] =
+            self.iops_wr_max.clone().into();
+        to_json["block_set_io_throttle"]["arguments"]["bps"] = self.bps.clone().into();
+        to_json["block_set_io_throttle"]["arguments"]["bps_rd"] = self.bps_rd.clone().into();
+        to_json["block_set_io_throttle"]["arguments"]["bps_wr"] = self.bps_wr.clone().into();
+        to_json["block_set_io_throttle"]["arguments"]["device"] = self.device.clone().into();
+        to_json["block_set_io_throttle"]["arguments"]["iops"] = self.iops.clone().into();
+        to_json["block_set_io_throttle"]["arguments"]["iops_rd"] = self.iops_rd.clone().into();
+        to_json["block_set_io_throttle"]["arguments"]["iops_wr"] = self.iops_wr.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct block_stream {
-    execute: String,
     pub backing_file: String,
     pub base: String,
     pub on_error: String,
@@ -398,7 +749,6 @@ impl block_stream {
                device: String)
                -> block_stream {
         block_stream {
-            execute: "block_stream".to_string(),
             backing_file: backing_file,
             base: base,
             on_error: on_error,
@@ -407,152 +757,295 @@ impl block_stream {
         }
     }
 }
+impl<T> QemuCmd<T> for block_stream {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "block-stream".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["block-stream"]["arguments"]["backing_file"] = self.backing_file.clone().into();
+        to_json["block-stream"]["arguments"]["base"] = self.base.clone().into();
+        to_json["block-stream"]["arguments"]["on_error"] = self.on_error.clone().into();
+        to_json["block-stream"]["arguments"]["speed"] = self.speed.clone().into();
+        to_json["block-stream"]["arguments"]["device"] = self.device.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct block_job_set_speed {
-    execute: String,
     pub device: String,
     pub speed: f64,
 }
 impl block_job_set_speed {
     pub fn new(device: String, speed: f64) -> block_job_set_speed {
         block_job_set_speed {
-            execute: "block_job_set_speed".to_string(),
             device: device,
             speed: speed,
         }
     }
 }
+impl<T> QemuCmd<T> for block_job_set_speed {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "block-job-set-speed".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["block-job-set-speed"]["arguments"]["device"] = self.device.clone().into();
+        to_json["block-job-set-speed"]["arguments"]["speed"] = self.speed.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct block_job_cancel {
-    execute: String,
     pub force: bool,
     pub device: String,
 }
 impl block_job_cancel {
     pub fn new(force: bool, device: String) -> block_job_cancel {
         block_job_cancel {
-            execute: "block_job_cancel".to_string(),
             force: force,
             device: device,
         }
     }
 }
+impl<T> QemuCmd<T> for block_job_cancel {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "block-job-cancel".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["block-job-cancel"]["arguments"]["force"] = self.force.clone().into();
+        to_json["block-job-cancel"]["arguments"]["device"] = self.device.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct block_job_pause {
-    execute: String,
     pub device: String,
 }
 impl block_job_pause {
     pub fn new(device: String) -> block_job_pause {
-        block_job_pause {
-            execute: "block_job_pause".to_string(),
-            device: device,
-        }
+        block_job_pause { device: device }
+    }
+}
+impl<T> QemuCmd<T> for block_job_pause {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "block-job-pause".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["block-job-pause"]["arguments"]["device"] = self.device.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct block_job_resume {
-    execute: String,
     pub device: String,
 }
 impl block_job_resume {
     pub fn new(device: String) -> block_job_resume {
-        block_job_resume {
-            execute: "block_job_resume".to_string(),
-            device: device,
-        }
+        block_job_resume { device: device }
+    }
+}
+impl<T> QemuCmd<T> for block_job_resume {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "block-job-resume".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["block-job-resume"]["arguments"]["device"] = self.device.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct block_job_complete {
-    execute: String,
     pub device: String,
 }
 impl block_job_complete {
     pub fn new(device: String) -> block_job_complete {
-        block_job_complete {
-            execute: "block_job_complete".to_string(),
-            device: device,
-        }
+        block_job_complete { device: device }
+    }
+}
+impl<T> QemuCmd<T> for block_job_complete {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "block-job-complete".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["block-job-complete"]["arguments"]["device"] = self.device.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct blockdev_add {
-    execute: String,
     pub options: String,
 }
 impl blockdev_add {
     pub fn new(options: String) -> blockdev_add {
-        blockdev_add {
-            execute: "blockdev_add".to_string(),
-            options: options,
-        }
+        blockdev_add { options: options }
+    }
+}
+impl<T> QemuCmd<T> for blockdev_add {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "blockdev-add".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["blockdev-add"]["arguments"]["options"] = self.options.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct block_set_write_threshold {
-    execute: String,
     pub node_name: String,
     pub write_threshold: u64,
 }
 impl block_set_write_threshold {
     pub fn new(node_name: String, write_threshold: u64) -> block_set_write_threshold {
         block_set_write_threshold {
-            execute: "block_set_write_threshold".to_string(),
             node_name: node_name,
             write_threshold: write_threshold,
         }
     }
 }
+impl<T> QemuCmd<T> for block_set_write_threshold {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "block-set-write-threshold".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["block-set-write-threshold"]["arguments"]["node_name"] =
+            self.node_name.clone().into();
+        to_json["block-set-write-threshold"]["arguments"]["write_threshold"] =
+            self.write_threshold.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct query_version {
-    execute: String,
-}
+
+        }
 impl query_version {
     pub fn new() -> query_version {
-        query_version { execute: "query_version".to_string() }
+        query_version {}
+    }
+}
+impl<T> QemuCmd<T> for query_version {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-version".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
     }
 
-    pub fn parse_qemu_response(response: &String) -> Result<VersionInfo, String> {
-        Ok(json::decode(&response).unwrap())
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_commands {
-    execute: String,
-}
+
+        }
 impl query_commands {
     pub fn new() -> query_commands {
-        query_commands { execute: "query_commands".to_string() }
+        query_commands {}
+    }
+}
+impl<T> QemuCmd<T> for query_commands {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-commands".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct trace_event_get_state {
-    execute: String,
     pub name: String,
 }
 impl trace_event_get_state {
     pub fn new(name: String) -> trace_event_get_state {
-        trace_event_get_state {
-            execute: "trace_event_get_state".to_string(),
-            name: name,
-        }
+        trace_event_get_state { name: name }
+    }
+}
+impl<T> QemuCmd<T> for trace_event_get_state {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "trace-event-get-state".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["trace-event-get-state"]["arguments"]["name"] = self.name.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct trace_event_set_state {
-    execute: String,
     pub ignore_unavailable: bool,
     pub enable: bool,
     pub name: String,
@@ -560,17 +1053,33 @@ pub struct trace_event_set_state {
 impl trace_event_set_state {
     pub fn new(ignore_unavailable: bool, enable: bool, name: String) -> trace_event_set_state {
         trace_event_set_state {
-            execute: "trace_event_set_state".to_string(),
             ignore_unavailable: ignore_unavailable,
             enable: enable,
             name: name,
         }
     }
 }
+impl<T> QemuCmd<T> for trace_event_set_state {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "trace-event-set-state".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["trace-event-set-state"]["arguments"]["ignore_unavailable"] =
+            self.ignore_unavailable.clone().into();
+        to_json["trace-event-set-state"]["arguments"]["enable"] = self.enable.clone().into();
+        to_json["trace-event-set-state"]["arguments"]["name"] = self.name.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct add_client {
-    execute: String,
     pub skipauth: bool,
     pub tls: bool,
     pub fdname: String,
@@ -579,7 +1088,6 @@ pub struct add_client {
 impl add_client {
     pub fn new(skipauth: bool, tls: bool, fdname: String, protocol: String) -> add_client {
         add_client {
-            execute: "add_client".to_string(),
             skipauth: skipauth,
             tls: tls,
             fdname: fdname,
@@ -587,86 +1095,177 @@ impl add_client {
         }
     }
 }
+impl<T> QemuCmd<T> for add_client {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "add_client".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["add_client"]["arguments"]["skipauth"] = self.skipauth.clone().into();
+        to_json["add_client"]["arguments"]["tls"] = self.tls.clone().into();
+        to_json["add_client"]["arguments"]["fdname"] = self.fdname.clone().into();
+        to_json["add_client"]["arguments"]["protocol"] = self.protocol.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct query_name {
-    execute: String,
-}
+
+        }
 impl query_name {
     pub fn new() -> query_name {
-        query_name { execute: "query_name".to_string() }
+        query_name {}
+    }
+}
+impl<T> QemuCmd<T> for query_name {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-name".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
     }
 
-    pub fn parse_qemu_response(response: &String) -> Result<NameInfo, String> {
-        Ok(json::decode(&response).unwrap())
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_kvm {
-    execute: String,
-}
+
+        }
 impl query_kvm {
     pub fn new() -> query_kvm {
-        query_kvm { execute: "query_kvm".to_string() }
+        query_kvm {}
+    }
+}
+impl<T> QemuCmd<T> for query_kvm {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-kvm".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
     }
 
-    pub fn parse_qemu_response(response: &String) -> Result<KvmInfo, String> {
-        Ok(json::decode(&response).unwrap())
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_status {
-    execute: String,
-}
+
+        }
 impl query_status {
     pub fn new() -> query_status {
-        query_status { execute: "query_status".to_string() }
+        query_status {}
+    }
+}
+impl<T> QemuCmd<T> for query_status {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-status".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
     }
 
-    pub fn parse_qemu_response(response: &String) -> Result<StatusInfo, String> {
-        Ok(json::decode(&response).unwrap())
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_uuid {
-    execute: String,
-}
+
+        }
 impl query_uuid {
     pub fn new() -> query_uuid {
-        query_uuid { execute: "query_uuid".to_string() }
+        query_uuid {}
+    }
+}
+impl<T> QemuCmd<T> for query_uuid {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-uuid".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
     }
 
-    pub fn parse_qemu_response(response: &String) -> Result<UuidInfo, String> {
-        Ok(json::decode(&response).unwrap())
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_chardev {
-    execute: String,
-}
+
+        }
 impl query_chardev {
     pub fn new() -> query_chardev {
-        query_chardev { execute: "query_chardev".to_string() }
+        query_chardev {}
+    }
+}
+impl<T> QemuCmd<T> for query_chardev {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-chardev".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_chardev_backends {
-    execute: String,
-}
+
+        }
 impl query_chardev_backends {
     pub fn new() -> query_chardev_backends {
-        query_chardev_backends { execute: "query_chardev_backends".to_string() }
+        query_chardev_backends {}
+    }
+}
+impl<T> QemuCmd<T> for query_chardev_backends {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-chardev-backends".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct ringbuf_write {
-    execute: String,
     pub format: String,
     pub data: String,
     pub device: String,
@@ -674,17 +1273,32 @@ pub struct ringbuf_write {
 impl ringbuf_write {
     pub fn new(format: String, data: String, device: String) -> ringbuf_write {
         ringbuf_write {
-            execute: "ringbuf_write".to_string(),
             format: format,
             data: data,
             device: device,
         }
     }
 }
+impl<T> QemuCmd<T> for ringbuf_write {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "ringbuf-write".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["ringbuf-write"]["arguments"]["format"] = self.format.clone().into();
+        to_json["ringbuf-write"]["arguments"]["data"] = self.data.clone().into();
+        to_json["ringbuf-write"]["arguments"]["device"] = self.device.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct ringbuf_read {
-    execute: String,
     pub format: String,
     pub device: String,
     pub size: f64,
@@ -692,69 +1306,133 @@ pub struct ringbuf_read {
 impl ringbuf_read {
     pub fn new(format: String, device: String, size: f64) -> ringbuf_read {
         ringbuf_read {
-            execute: "ringbuf_read".to_string(),
             format: format,
             device: device,
             size: size,
         }
     }
+}
+impl<T> QemuCmd<T> for ringbuf_read {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "ringbuf-read".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["ringbuf-read"]["arguments"]["format"] = self.format.clone().into();
+        to_json["ringbuf-read"]["arguments"]["device"] = self.device.clone().into();
+        to_json["ringbuf-read"]["arguments"]["size"] = self.size.clone().into();
+        to_json.dump()
+    }
 
-    pub fn parse_qemu_response(response: &String) -> Result<String, String> {
-        Ok(json::decode(&response).unwrap())
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_events {
-    execute: String,
-}
+
+        }
 impl query_events {
     pub fn new() -> query_events {
-        query_events { execute: "query_events".to_string() }
+        query_events {}
+    }
+}
+impl<T> QemuCmd<T> for query_events {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-events".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_migrate {
-    execute: String,
-}
+
+        }
 impl query_migrate {
     pub fn new() -> query_migrate {
-        query_migrate { execute: "query_migrate".to_string() }
+        query_migrate {}
+    }
+}
+impl<T> QemuCmd<T> for query_migrate {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-migrate".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
     }
 
-    pub fn parse_qemu_response(response: &String) -> Result<MigrationInfo, String> {
-        Ok(json::decode(&response).unwrap())
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct migrate_set_capabilities {
-    execute: String,
     pub capabilities: Vec<String>,
 }
 impl migrate_set_capabilities {
     pub fn new(capabilities: Vec<String>) -> migrate_set_capabilities {
-        migrate_set_capabilities {
-            execute: "migrate_set_capabilities".to_string(),
-            capabilities: capabilities,
-        }
+        migrate_set_capabilities { capabilities: capabilities }
+    }
+}
+impl<T> QemuCmd<T> for migrate_set_capabilities {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "migrate-set-capabilities".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["migrate-set-capabilities"]["arguments"]["capabilities"] =
+            self.capabilities.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_migrate_capabilities {
-    execute: String,
-}
+
+        }
 impl query_migrate_capabilities {
     pub fn new() -> query_migrate_capabilities {
-        query_migrate_capabilities { execute: "query_migrate_capabilities".to_string() }
+        query_migrate_capabilities {}
+    }
+}
+impl<T> QemuCmd<T> for query_migrate_capabilities {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-migrate-capabilities".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct migrate_set_parameters {
-    execute: String,
     pub compress_level: f64,
     pub compress_threads: f64,
     pub decompress_threads: f64,
@@ -765,191 +1443,410 @@ impl migrate_set_parameters {
                decompress_threads: f64)
                -> migrate_set_parameters {
         migrate_set_parameters {
-            execute: "migrate_set_parameters".to_string(),
             compress_level: compress_level,
             compress_threads: compress_threads,
             decompress_threads: decompress_threads,
         }
     }
 }
+impl<T> QemuCmd<T> for migrate_set_parameters {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "migrate-set-parameters".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["migrate-set-parameters"]["arguments"]["compress_level"] =
+            self.compress_level.clone().into();
+        to_json["migrate-set-parameters"]["arguments"]["compress_threads"] =
+            self.compress_threads.clone().into();
+        to_json["migrate-set-parameters"]["arguments"]["decompress_threads"] =
+            self.decompress_threads.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct query_migrate_parameters {
-    execute: String,
-}
+
+        }
 impl query_migrate_parameters {
     pub fn new() -> query_migrate_parameters {
-        query_migrate_parameters { execute: "query_migrate_parameters".to_string() }
+        query_migrate_parameters {}
+    }
+}
+impl<T> QemuCmd<T> for query_migrate_parameters {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-migrate-parameters".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
     }
 
-    pub fn parse_qemu_response(response: &String) -> Result<MigrationParameters, String> {
-        Ok(json::decode(&response).unwrap())
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_mice {
-    execute: String,
-}
+
+        }
 impl query_mice {
     pub fn new() -> query_mice {
-        query_mice { execute: "query_mice".to_string() }
+        query_mice {}
+    }
+}
+impl<T> QemuCmd<T> for query_mice {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-mice".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_cpus {
-    execute: String,
-}
+
+        }
 impl query_cpus {
     pub fn new() -> query_cpus {
-        query_cpus { execute: "query_cpus".to_string() }
+        query_cpus {}
+    }
+}
+impl<T> QemuCmd<T> for query_cpus {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-cpus".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_iothreads {
-    execute: String,
-}
+
+        }
 impl query_iothreads {
     pub fn new() -> query_iothreads {
-        query_iothreads { execute: "query_iothreads".to_string() }
+        query_iothreads {}
+    }
+}
+impl<T> QemuCmd<T> for query_iothreads {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-iothreads".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_vnc {
-    execute: String,
-}
+
+        }
 impl query_vnc {
     pub fn new() -> query_vnc {
-        query_vnc { execute: "query_vnc".to_string() }
+        query_vnc {}
+    }
+}
+impl<T> QemuCmd<T> for query_vnc {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-vnc".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
     }
 
-    pub fn parse_qemu_response(response: &String) -> Result<VncInfo, String> {
-        Ok(json::decode(&response).unwrap())
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_vnc_servers {
-    execute: String,
-}
+
+        }
 impl query_vnc_servers {
     pub fn new() -> query_vnc_servers {
-        query_vnc_servers { execute: "query_vnc_servers".to_string() }
+        query_vnc_servers {}
+    }
+}
+impl<T> QemuCmd<T> for query_vnc_servers {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-vnc-servers".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_spice {
-    execute: String,
-}
+
+        }
 impl query_spice {
     pub fn new() -> query_spice {
-        query_spice { execute: "query_spice".to_string() }
+        query_spice {}
+    }
+}
+impl<T> QemuCmd<T> for query_spice {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-spice".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
     }
 
-    pub fn parse_qemu_response(response: &String) -> Result<SpiceInfo, String> {
-        Ok(json::decode(&response).unwrap())
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_balloon {
-    execute: String,
-}
+
+        }
 impl query_balloon {
     pub fn new() -> query_balloon {
-        query_balloon { execute: "query_balloon".to_string() }
+        query_balloon {}
+    }
+}
+impl<T> QemuCmd<T> for query_balloon {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-balloon".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
     }
 
-    pub fn parse_qemu_response(response: &String) -> Result<BalloonInfo, String> {
-        Ok(json::decode(&response).unwrap())
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_pci {
-    execute: String,
-}
+
+        }
 impl query_pci {
     pub fn new() -> query_pci {
-        query_pci { execute: "query_pci".to_string() }
+        query_pci {}
+    }
+}
+impl<T> QemuCmd<T> for query_pci {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-pci".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct quit {
-    execute: String,
-}
+
+        }
 impl quit {
     pub fn new() -> quit {
-        quit { execute: "quit".to_string() }
+        quit {}
+    }
+}
+impl<T> QemuCmd<T> for quit {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "quit".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct stop {
-    execute: String,
-}
+
+        }
 impl stop {
     pub fn new() -> stop {
-        stop { execute: "stop".to_string() }
+        stop {}
+    }
+}
+impl<T> QemuCmd<T> for stop {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "stop".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct system_reset {
-    execute: String,
-}
+
+        }
 impl system_reset {
     pub fn new() -> system_reset {
-        system_reset { execute: "system_reset".to_string() }
+        system_reset {}
+    }
+}
+impl<T> QemuCmd<T> for system_reset {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "system_reset".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct system_powerdown {
-    execute: String,
-}
+
+        }
 impl system_powerdown {
     pub fn new() -> system_powerdown {
-        system_powerdown { execute: "system_powerdown".to_string() }
+        system_powerdown {}
+    }
+}
+impl<T> QemuCmd<T> for system_powerdown {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "system_powerdown".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct cpu {
-    execute: String,
     pub index: f64,
 }
 impl cpu {
     pub fn new(index: f64) -> cpu {
-        cpu {
-            execute: "cpu".to_string(),
-            index: index,
-        }
+        cpu { index: index }
+    }
+}
+impl<T> QemuCmd<T> for cpu {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "cpu".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["cpu"]["arguments"]["index"] = self.index.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct cpu_add {
-    execute: String,
     pub id: f64,
 }
 impl cpu_add {
     pub fn new(id: f64) -> cpu_add {
-        cpu_add {
-            execute: "cpu_add".to_string(),
-            id: id,
-        }
+        cpu_add { id: id }
+    }
+}
+impl<T> QemuCmd<T> for cpu_add {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "cpu-add".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["cpu-add"]["arguments"]["id"] = self.id.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct memsave {
-    execute: String,
     pub cpu_index: f64,
     pub filename: String,
     pub size: f64,
@@ -958,7 +1855,6 @@ pub struct memsave {
 impl memsave {
     pub fn new(cpu_index: f64, filename: String, size: f64, val: f64) -> memsave {
         memsave {
-            execute: "memsave".to_string(),
             cpu_index: cpu_index,
             filename: filename,
             size: size,
@@ -966,10 +1862,27 @@ impl memsave {
         }
     }
 }
+impl<T> QemuCmd<T> for memsave {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "memsave".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["memsave"]["arguments"]["cpu_index"] = self.cpu_index.clone().into();
+        to_json["memsave"]["arguments"]["filename"] = self.filename.clone().into();
+        to_json["memsave"]["arguments"]["size"] = self.size.clone().into();
+        to_json["memsave"]["arguments"]["val"] = self.val.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct pmemsave {
-    execute: String,
     pub filename: String,
     pub size: f64,
     pub val: f64,
@@ -977,191 +1890,368 @@ pub struct pmemsave {
 impl pmemsave {
     pub fn new(filename: String, size: f64, val: f64) -> pmemsave {
         pmemsave {
-            execute: "pmemsave".to_string(),
             filename: filename,
             size: size,
             val: val,
         }
     }
 }
+impl<T> QemuCmd<T> for pmemsave {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "pmemsave".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["pmemsave"]["arguments"]["filename"] = self.filename.clone().into();
+        to_json["pmemsave"]["arguments"]["size"] = self.size.clone().into();
+        to_json["pmemsave"]["arguments"]["val"] = self.val.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct cont {
-    execute: String,
-}
+
+        }
 impl cont {
     pub fn new() -> cont {
-        cont { execute: "cont".to_string() }
+        cont {}
+    }
+}
+impl<T> QemuCmd<T> for cont {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "cont".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct system_wakeup {
-    execute: String,
-}
+
+        }
 impl system_wakeup {
     pub fn new() -> system_wakeup {
-        system_wakeup { execute: "system_wakeup".to_string() }
+        system_wakeup {}
+    }
+}
+impl<T> QemuCmd<T> for system_wakeup {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "system_wakeup".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct inject_nmi {
-    execute: String,
-}
+
+        }
 impl inject_nmi {
     pub fn new() -> inject_nmi {
-        inject_nmi { execute: "inject_nmi".to_string() }
+        inject_nmi {}
+    }
+}
+impl<T> QemuCmd<T> for inject_nmi {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "inject-nmi".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct set_link {
-    execute: String,
     pub name: String,
     pub up: bool,
 }
 impl set_link {
     pub fn new(name: String, up: bool) -> set_link {
         set_link {
-            execute: "set_link".to_string(),
             name: name,
             up: up,
         }
     }
 }
+impl<T> QemuCmd<T> for set_link {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "set_link".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["set_link"]["arguments"]["name"] = self.name.clone().into();
+        to_json["set_link"]["arguments"]["up"] = self.up.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct balloon {
-    execute: String,
     pub value: f64,
 }
 impl balloon {
     pub fn new(value: f64) -> balloon {
-        balloon {
-            execute: "balloon".to_string(),
-            value: value,
-        }
+        balloon { value: value }
+    }
+}
+impl<T> QemuCmd<T> for balloon {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "balloon".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["balloon"]["arguments"]["value"] = self.value.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct transaction {
-    execute: String,
     pub actions: Vec<String>,
 }
 impl transaction {
     pub fn new(actions: Vec<String>) -> transaction {
-        transaction {
-            execute: "transaction".to_string(),
-            actions: actions,
-        }
+        transaction { actions: actions }
+    }
+}
+impl<T> QemuCmd<T> for transaction {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "transaction".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["transaction"]["arguments"]["actions"] = self.actions.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct human_monitor_command {
-    execute: String,
     pub cpu_index: f64,
     pub command_line: String,
 }
 impl human_monitor_command {
     pub fn new(cpu_index: f64, command_line: String) -> human_monitor_command {
         human_monitor_command {
-            execute: "human_monitor_command".to_string(),
             cpu_index: cpu_index,
             command_line: command_line,
         }
     }
+}
+impl<T> QemuCmd<T> for human_monitor_command {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "human-monitor-command".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["human-monitor-command"]["arguments"]["cpu_index"] = self.cpu_index.clone().into();
+        to_json["human-monitor-command"]["arguments"]["command_line"] =
+            self.command_line.clone().into();
+        to_json.dump()
+    }
 
-    pub fn parse_qemu_response(response: &String) -> Result<String, String> {
-        Ok(json::decode(&response).unwrap())
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct migrate_cancel {
-    execute: String,
-}
+
+        }
 impl migrate_cancel {
     pub fn new() -> migrate_cancel {
-        migrate_cancel { execute: "migrate_cancel".to_string() }
+        migrate_cancel {}
+    }
+}
+impl<T> QemuCmd<T> for migrate_cancel {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "migrate_cancel".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct migrate_set_downtime {
-    execute: String,
     pub value: String,
 }
 impl migrate_set_downtime {
     pub fn new(value: String) -> migrate_set_downtime {
-        migrate_set_downtime {
-            execute: "migrate_set_downtime".to_string(),
-            value: value,
-        }
+        migrate_set_downtime { value: value }
+    }
+}
+impl<T> QemuCmd<T> for migrate_set_downtime {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "migrate_set_downtime".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["migrate_set_downtime"]["arguments"]["value"] = self.value.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct migrate_set_speed {
-    execute: String,
     pub value: f64,
 }
 impl migrate_set_speed {
     pub fn new(value: f64) -> migrate_set_speed {
-        migrate_set_speed {
-            execute: "migrate_set_speed".to_string(),
-            value: value,
-        }
+        migrate_set_speed { value: value }
+    }
+}
+impl<T> QemuCmd<T> for migrate_set_speed {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "migrate_set_speed".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["migrate_set_speed"]["arguments"]["value"] = self.value.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct migrate_set_cache_size {
-    execute: String,
     pub value: f64,
 }
 impl migrate_set_cache_size {
     pub fn new(value: f64) -> migrate_set_cache_size {
-        migrate_set_cache_size {
-            execute: "migrate_set_cache_size".to_string(),
-            value: value,
-        }
+        migrate_set_cache_size { value: value }
+    }
+}
+impl<T> QemuCmd<T> for migrate_set_cache_size {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "migrate-set-cache-size".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["migrate-set-cache-size"]["arguments"]["value"] = self.value.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_migrate_cache_size {
-    execute: String,
-}
+
+        }
 impl query_migrate_cache_size {
     pub fn new() -> query_migrate_cache_size {
-        query_migrate_cache_size { execute: "query_migrate_cache_size".to_string() }
+        query_migrate_cache_size {}
+    }
+}
+impl<T> QemuCmd<T> for query_migrate_cache_size {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-migrate-cache-size".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
     }
 
-    pub fn parse_qemu_response(response: &String) -> Result<i64, String> {
-        Ok(json::decode(&response).unwrap())
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct qom_list {
-    execute: String,
     pub path: String,
 }
 impl qom_list {
     pub fn new(path: String) -> qom_list {
-        qom_list {
-            execute: "qom_list".to_string(),
-            path: path,
-        }
+        qom_list { path: path }
+    }
+}
+impl<T> QemuCmd<T> for qom_list {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "qom-list".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["qom-list"]["arguments"]["path"] = self.path.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct qom_set {
-    execute: String,
     pub path: String,
     pub property: String,
     pub value: String,
@@ -1170,7 +2260,6 @@ pub struct qom_set {
 impl qom_set {
     pub fn new(path: String, property: String, value: String, gen: bool) -> qom_set {
         qom_set {
-            execute: "qom_set".to_string(),
             path: path,
             property: property,
             value: value,
@@ -1178,10 +2267,26 @@ impl qom_set {
         }
     }
 }
+impl<T> QemuCmd<T> for qom_set {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "qom-set".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["qom-set"]["arguments"]["path"] = self.path.clone().into();
+        to_json["qom-set"]["arguments"]["property"] = self.property.clone().into();
+        to_json["qom-set"]["arguments"]["value"] = self.value.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct set_password {
-    execute: String,
     pub connected: String,
     pub password: String,
     pub protocol: String,
@@ -1189,47 +2294,87 @@ pub struct set_password {
 impl set_password {
     pub fn new(connected: String, password: String, protocol: String) -> set_password {
         set_password {
-            execute: "set_password".to_string(),
             connected: connected,
             password: password,
             protocol: protocol,
         }
     }
 }
+impl<T> QemuCmd<T> for set_password {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "set_password".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["set_password"]["arguments"]["connected"] = self.connected.clone().into();
+        to_json["set_password"]["arguments"]["password"] = self.password.clone().into();
+        to_json["set_password"]["arguments"]["protocol"] = self.protocol.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct expire_password {
-    execute: String,
     pub protocol: String,
     pub time: String,
 }
 impl expire_password {
     pub fn new(protocol: String, time: String) -> expire_password {
         expire_password {
-            execute: "expire_password".to_string(),
             protocol: protocol,
             time: time,
         }
     }
 }
+impl<T> QemuCmd<T> for expire_password {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "expire_password".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["expire_password"]["arguments"]["protocol"] = self.protocol.clone().into();
+        to_json["expire_password"]["arguments"]["time"] = self.time.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct change_vnc_password {
-    execute: String,
     pub password: String,
 }
 impl change_vnc_password {
     pub fn new(password: String) -> change_vnc_password {
-        change_vnc_password {
-            execute: "change_vnc_password".to_string(),
-            password: password,
-        }
+        change_vnc_password { password: password }
+    }
+}
+impl<T> QemuCmd<T> for change_vnc_password {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "change-vnc-password".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["change-vnc-password"]["arguments"]["password"] = self.password.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct change {
-    execute: String,
     pub arg: String,
     pub device: String,
     pub target: String,
@@ -1237,47 +2382,87 @@ pub struct change {
 impl change {
     pub fn new(arg: String, device: String, target: String) -> change {
         change {
-            execute: "change".to_string(),
             arg: arg,
             device: device,
             target: target,
         }
     }
 }
+impl<T> QemuCmd<T> for change {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "change".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["change"]["arguments"]["arg"] = self.arg.clone().into();
+        to_json["change"]["arguments"]["device"] = self.device.clone().into();
+        to_json["change"]["arguments"]["target"] = self.target.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct qom_list_types {
-    execute: String,
     pub qemu_abstract: bool,
     pub implements: String,
 }
 impl qom_list_types {
     pub fn new(qemu_abstract: bool, implements: String) -> qom_list_types {
         qom_list_types {
-            execute: "qom_list_types".to_string(),
             qemu_abstract: qemu_abstract,
             implements: implements,
         }
     }
 }
+impl<T> QemuCmd<T> for qom_list_types {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "qom-list-types".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["qom-list-types"]["arguments"]["qemu_abstract"] = self.qemu_abstract.clone().into();
+        to_json["qom-list-types"]["arguments"]["implements"] = self.implements.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct device_list_properties {
-    execute: String,
     pub typename: String,
 }
 impl device_list_properties {
     pub fn new(typename: String) -> device_list_properties {
-        device_list_properties {
-            execute: "device_list_properties".to_string(),
-            typename: typename,
-        }
+        device_list_properties { typename: typename }
+    }
+}
+impl<T> QemuCmd<T> for device_list_properties {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "device-list-properties".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["device-list-properties"]["arguments"]["typename"] = self.typename.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct migrate {
-    execute: String,
     pub blk: bool,
     pub detach: bool,
     pub inc: bool,
@@ -1286,7 +2471,6 @@ pub struct migrate {
 impl migrate {
     pub fn new(blk: bool, detach: bool, inc: bool, uri: String) -> migrate {
         migrate {
-            execute: "migrate".to_string(),
             blk: blk,
             detach: detach,
             inc: inc,
@@ -1294,66 +2478,127 @@ impl migrate {
         }
     }
 }
+impl<T> QemuCmd<T> for migrate {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "migrate".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["migrate"]["arguments"]["blk"] = self.blk.clone().into();
+        to_json["migrate"]["arguments"]["detach"] = self.detach.clone().into();
+        to_json["migrate"]["arguments"]["inc"] = self.inc.clone().into();
+        to_json["migrate"]["arguments"]["uri"] = self.uri.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct migrate_incoming {
-    execute: String,
     pub uri: String,
 }
 impl migrate_incoming {
     pub fn new(uri: String) -> migrate_incoming {
-        migrate_incoming {
-            execute: "migrate_incoming".to_string(),
-            uri: uri,
-        }
+        migrate_incoming { uri: uri }
+    }
+}
+impl<T> QemuCmd<T> for migrate_incoming {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "migrate-incoming".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["migrate-incoming"]["arguments"]["uri"] = self.uri.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct xen_save_devices_state {
-    execute: String,
     pub filename: String,
 }
 impl xen_save_devices_state {
     pub fn new(filename: String) -> xen_save_devices_state {
-        xen_save_devices_state {
-            execute: "xen_save_devices_state".to_string(),
-            filename: filename,
-        }
+        xen_save_devices_state { filename: filename }
+    }
+}
+impl<T> QemuCmd<T> for xen_save_devices_state {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "xen-save-devices-state".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["xen-save-devices-state"]["arguments"]["filename"] = self.filename.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct xen_set_global_dirty_log {
-    execute: String,
     pub enable: bool,
 }
 impl xen_set_global_dirty_log {
     pub fn new(enable: bool) -> xen_set_global_dirty_log {
-        xen_set_global_dirty_log {
-            execute: "xen_set_global_dirty_log".to_string(),
-            enable: enable,
-        }
+        xen_set_global_dirty_log { enable: enable }
+    }
+}
+impl<T> QemuCmd<T> for xen_set_global_dirty_log {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "xen-set-global-dirty-log".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["xen-set-global-dirty-log"]["arguments"]["enable"] = self.enable.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct device_del {
-    execute: String,
     pub id: String,
 }
 impl device_del {
     pub fn new(id: String) -> device_del {
-        device_del {
-            execute: "device_del".to_string(),
-            id: id,
-        }
+        device_del { id: id }
+    }
+}
+impl<T> QemuCmd<T> for device_del {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "device_del".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["device_del"]["arguments"]["id"] = self.id.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct dump_guest_memory {
-    execute: String,
     pub begin: f64,
     pub format: String,
     pub length: f64,
@@ -1368,7 +2613,6 @@ impl dump_guest_memory {
                protocol: String)
                -> dump_guest_memory {
         dump_guest_memory {
-            execute: "dump_guest_memory".to_string(),
             begin: begin,
             format: format,
             length: length,
@@ -1377,26 +2621,53 @@ impl dump_guest_memory {
         }
     }
 }
+impl<T> QemuCmd<T> for dump_guest_memory {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "dump-guest-memory".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["dump-guest-memory"]["arguments"]["begin"] = self.begin.clone().into();
+        to_json["dump-guest-memory"]["arguments"]["format"] = self.format.clone().into();
+        to_json["dump-guest-memory"]["arguments"]["length"] = self.length.clone().into();
+        to_json["dump-guest-memory"]["arguments"]["paging"] = self.paging.clone().into();
+        to_json["dump-guest-memory"]["arguments"]["protocol"] = self.protocol.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct query_dump_guest_memory_capability {
-    execute: String,
-}
+
+        }
 impl query_dump_guest_memory_capability {
     pub fn new() -> query_dump_guest_memory_capability {
-        query_dump_guest_memory_capability {
-            execute: "query_dump_guest_memory_capability".to_string(),
-        }
+        query_dump_guest_memory_capability {}
+    }
+}
+impl<T> QemuCmd<T> for query_dump_guest_memory_capability {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-dump-guest-memory-capability".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
     }
 
-    pub fn parse_qemu_response(response: &String) -> Result<DumpGuestMemoryCapability, String> {
-        Ok(json::decode(&response).unwrap())
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct netdev_add {
-    execute: String,
     pub props: String,
     pub id: String,
     pub qemu_type: String,
@@ -1405,7 +2676,6 @@ pub struct netdev_add {
 impl netdev_add {
     pub fn new(props: String, id: String, qemu_type: String, gen: bool) -> netdev_add {
         netdev_add {
-            execute: "netdev_add".to_string(),
             props: props,
             id: id,
             qemu_type: qemu_type,
@@ -1413,24 +2683,51 @@ impl netdev_add {
         }
     }
 }
+impl<T> QemuCmd<T> for netdev_add {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "netdev_add".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["netdev_add"]["arguments"]["props"] = self.props.clone().into();
+        to_json["netdev_add"]["arguments"]["id"] = self.id.clone().into();
+        to_json["netdev_add"]["arguments"]["qemu_type"] = self.qemu_type.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct netdev_del {
-    execute: String,
     pub id: String,
 }
 impl netdev_del {
     pub fn new(id: String) -> netdev_del {
-        netdev_del {
-            execute: "netdev_del".to_string(),
-            id: id,
-        }
+        netdev_del { id: id }
+    }
+}
+impl<T> QemuCmd<T> for netdev_del {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "netdev_del".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["netdev_del"]["arguments"]["id"] = self.id.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct object_add {
-    execute: String,
     pub props: String,
     pub id: String,
     pub qom_type: String,
@@ -1439,7 +2736,6 @@ pub struct object_add {
 impl object_add {
     pub fn new(props: String, id: String, qom_type: String, gen: bool) -> object_add {
         object_add {
-            execute: "object_add".to_string(),
             props: props,
             id: id,
             qom_type: qom_type,
@@ -1447,303 +2743,620 @@ impl object_add {
         }
     }
 }
+impl<T> QemuCmd<T> for object_add {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "object-add".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["object-add"]["arguments"]["props"] = self.props.clone().into();
+        to_json["object-add"]["arguments"]["id"] = self.id.clone().into();
+        to_json["object-add"]["arguments"]["qom_type"] = self.qom_type.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct object_del {
-    execute: String,
     pub id: String,
 }
 impl object_del {
     pub fn new(id: String) -> object_del {
-        object_del {
-            execute: "object_del".to_string(),
-            id: id,
-        }
+        object_del { id: id }
+    }
+}
+impl<T> QemuCmd<T> for object_del {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "object-del".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["object-del"]["arguments"]["id"] = self.id.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct getfd {
-    execute: String,
     pub fdname: String,
 }
 impl getfd {
     pub fn new(fdname: String) -> getfd {
-        getfd {
-            execute: "getfd".to_string(),
-            fdname: fdname,
-        }
+        getfd { fdname: fdname }
+    }
+}
+impl<T> QemuCmd<T> for getfd {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "getfd".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["getfd"]["arguments"]["fdname"] = self.fdname.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct closefd {
-    execute: String,
     pub fdname: String,
 }
 impl closefd {
     pub fn new(fdname: String) -> closefd {
-        closefd {
-            execute: "closefd".to_string(),
-            fdname: fdname,
-        }
+        closefd { fdname: fdname }
+    }
+}
+impl<T> QemuCmd<T> for closefd {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "closefd".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["closefd"]["arguments"]["fdname"] = self.fdname.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_machines {
-    execute: String,
-}
+
+        }
 impl query_machines {
     pub fn new() -> query_machines {
-        query_machines { execute: "query_machines".to_string() }
+        query_machines {}
+    }
+}
+impl<T> QemuCmd<T> for query_machines {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-machines".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_cpu_definitions {
-    execute: String,
-}
+
+        }
 impl query_cpu_definitions {
     pub fn new() -> query_cpu_definitions {
-        query_cpu_definitions { execute: "query_cpu_definitions".to_string() }
+        query_cpu_definitions {}
+    }
+}
+impl<T> QemuCmd<T> for query_cpu_definitions {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-cpu-definitions".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct add_fd {
-    execute: String,
     pub fdset_id: f64,
     pub opaque: String,
 }
 impl add_fd {
     pub fn new(fdset_id: f64, opaque: String) -> add_fd {
         add_fd {
-            execute: "add_fd".to_string(),
             fdset_id: fdset_id,
             opaque: opaque,
         }
     }
+}
+impl<T> QemuCmd<T> for add_fd {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "add-fd".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["add-fd"]["arguments"]["fdset_id"] = self.fdset_id.clone().into();
+        to_json["add-fd"]["arguments"]["opaque"] = self.opaque.clone().into();
+        to_json.dump()
+    }
 
-    pub fn parse_qemu_response(response: &String) -> Result<AddfdInfo, String> {
-        Ok(json::decode(&response).unwrap())
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct remove_fd {
-    execute: String,
     pub fd: f64,
     pub fdset_id: f64,
 }
 impl remove_fd {
     pub fn new(fd: f64, fdset_id: f64) -> remove_fd {
         remove_fd {
-            execute: "remove_fd".to_string(),
             fd: fd,
             fdset_id: fdset_id,
         }
     }
 }
+impl<T> QemuCmd<T> for remove_fd {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "remove-fd".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["remove-fd"]["arguments"]["fd"] = self.fd.clone().into();
+        to_json["remove-fd"]["arguments"]["fdset_id"] = self.fdset_id.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct query_fdsets {
-    execute: String,
-}
+
+        }
 impl query_fdsets {
     pub fn new() -> query_fdsets {
-        query_fdsets { execute: "query_fdsets".to_string() }
+        query_fdsets {}
+    }
+}
+impl<T> QemuCmd<T> for query_fdsets {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-fdsets".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_target {
-    execute: String,
-}
+
+        }
 impl query_target {
     pub fn new() -> query_target {
-        query_target { execute: "query_target".to_string() }
+        query_target {}
+    }
+}
+impl<T> QemuCmd<T> for query_target {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-target".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
     }
 
-    pub fn parse_qemu_response(response: &String) -> Result<TargetInfo, String> {
-        Ok(json::decode(&response).unwrap())
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct send_key {
-    execute: String,
     pub hold_time: f64,
     pub keys: Vec<String>,
 }
 impl send_key {
     pub fn new(hold_time: f64, keys: Vec<String>) -> send_key {
         send_key {
-            execute: "send_key".to_string(),
             hold_time: hold_time,
             keys: keys,
         }
     }
 }
+impl<T> QemuCmd<T> for send_key {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "send-key".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["send-key"]["arguments"]["hold_time"] = self.hold_time.clone().into();
+        to_json["send-key"]["arguments"]["keys"] = self.keys.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct screendump {
-    execute: String,
     pub filename: String,
 }
 impl screendump {
     pub fn new(filename: String) -> screendump {
-        screendump {
-            execute: "screendump".to_string(),
-            filename: filename,
-        }
+        screendump { filename: filename }
+    }
+}
+impl<T> QemuCmd<T> for screendump {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "screendump".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["screendump"]["arguments"]["filename"] = self.filename.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct chardev_add {
-    execute: String,
     pub backend: String,
     pub id: String,
 }
 impl chardev_add {
     pub fn new(backend: String, id: String) -> chardev_add {
         chardev_add {
-            execute: "chardev_add".to_string(),
             backend: backend,
             id: id,
         }
     }
+}
+impl<T> QemuCmd<T> for chardev_add {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "chardev-add".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["chardev-add"]["arguments"]["backend"] = self.backend.clone().into();
+        to_json["chardev-add"]["arguments"]["id"] = self.id.clone().into();
+        to_json.dump()
+    }
 
-    pub fn parse_qemu_response(response: &String) -> Result<ChardevReturn, String> {
-        Ok(json::decode(&response).unwrap())
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct chardev_remove {
-    execute: String,
     pub id: String,
 }
 impl chardev_remove {
     pub fn new(id: String) -> chardev_remove {
-        chardev_remove {
-            execute: "chardev_remove".to_string(),
-            id: id,
-        }
+        chardev_remove { id: id }
+    }
+}
+impl<T> QemuCmd<T> for chardev_remove {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "chardev-remove".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["chardev-remove"]["arguments"]["id"] = self.id.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_tpm_models {
-    execute: String,
-}
+
+        }
 impl query_tpm_models {
     pub fn new() -> query_tpm_models {
-        query_tpm_models { execute: "query_tpm_models".to_string() }
+        query_tpm_models {}
+    }
+}
+impl<T> QemuCmd<T> for query_tpm_models {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-tpm-models".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_tpm_types {
-    execute: String,
-}
+
+        }
 impl query_tpm_types {
     pub fn new() -> query_tpm_types {
-        query_tpm_types { execute: "query_tpm_types".to_string() }
+        query_tpm_types {}
+    }
+}
+impl<T> QemuCmd<T> for query_tpm_types {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-tpm-types".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_tpm {
-    execute: String,
-}
+
+        }
 impl query_tpm {
     pub fn new() -> query_tpm {
-        query_tpm { execute: "query_tpm".to_string() }
+        query_tpm {}
+    }
+}
+impl<T> QemuCmd<T> for query_tpm {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-tpm".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_command_line_options {
-    execute: String,
     pub option: String,
 }
 impl query_command_line_options {
     pub fn new(option: String) -> query_command_line_options {
-        query_command_line_options {
-            execute: "query_command_line_options".to_string(),
-            option: option,
-        }
+        query_command_line_options { option: option }
+    }
+}
+impl<T> QemuCmd<T> for query_command_line_options {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-command-line-options".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["query-command-line-options"]["arguments"]["option"] = self.option.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_rx_filter {
-    execute: String,
     pub name: String,
 }
 impl query_rx_filter {
     pub fn new(name: String) -> query_rx_filter {
-        query_rx_filter {
-            execute: "query_rx_filter".to_string(),
-            name: name,
-        }
+        query_rx_filter { name: name }
+    }
+}
+impl<T> QemuCmd<T> for query_rx_filter {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-rx-filter".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["query-rx-filter"]["arguments"]["name"] = self.name.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct x_input_send_event {
-    execute: String,
     pub console: f64,
     pub events: Vec<String>,
 }
 impl x_input_send_event {
     pub fn new(console: f64, events: Vec<String>) -> x_input_send_event {
         x_input_send_event {
-            execute: "x_input_send_event".to_string(),
             console: console,
             events: events,
         }
     }
 }
+impl<T> QemuCmd<T> for x_input_send_event {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "x-input-send-event".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+        to_json["x-input-send-event"]["arguments"]["console"] = self.console.clone().into();
+        to_json["x-input-send-event"]["arguments"]["events"] = self.events.clone().into();
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
+    }
+}
 
 #[derive(Debug)]
 pub struct query_memdev {
-    execute: String,
-}
+
+        }
 impl query_memdev {
     pub fn new() -> query_memdev {
-        query_memdev { execute: "query_memdev".to_string() }
+        query_memdev {}
+    }
+}
+impl<T> QemuCmd<T> for query_memdev {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-memdev".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_memory_devices {
-    execute: String,
-}
+
+        }
 impl query_memory_devices {
     pub fn new() -> query_memory_devices {
-        query_memory_devices { execute: "query_memory_devices".to_string() }
+        query_memory_devices {}
+    }
+}
+impl<T> QemuCmd<T> for query_memory_devices {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-memory-devices".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct query_acpi_ospm_status {
-    execute: String,
-}
+
+        }
 impl query_acpi_ospm_status {
     pub fn new() -> query_acpi_ospm_status {
-        query_acpi_ospm_status { execute: "query_acpi_ospm_status".to_string() }
+        query_acpi_ospm_status {}
+    }
+}
+impl<T> QemuCmd<T> for query_acpi_ospm_status {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "query-acpi-ospm-status".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }
 
 #[derive(Debug)]
 pub struct rtc_reset_reinjection {
-    execute: String,
-}
+
+        }
 impl rtc_reset_reinjection {
     pub fn new() -> rtc_reset_reinjection {
-        rtc_reset_reinjection { execute: "rtc_reset_reinjection".to_string() }
+        rtc_reset_reinjection {}
+    }
+}
+impl<T> QemuCmd<T> for rtc_reset_reinjection {
+    fn to_json(&self) -> String {
+        let mut to_json = json::JsonValue::new_object();
+        to_json["execute"] = "rtc-reset-reinjection".into();
+        to_json["arguments"] = json::JsonValue::new_object();
+
+        to_json.dump()
+    }
+
+    fn parse_qemu_response(&self, response: &String) -> rustc_json::DecodeResult<T>
+        where T: rustc_decodable
+    {
+        rustc_json::decode(&response)
     }
 }

@@ -1,5 +1,7 @@
 extern crate bytes;
 #[macro_use]
+extern crate json;
+#[macro_use]
 extern crate log;
 extern crate mio;
 extern crate rustc_serialize;
@@ -15,10 +17,11 @@ mod events;
 mod qapi_connection;
 mod structs;
 
-trait QemuCmd {
+trait QemuCmd<T> {
     // Return a json blob that we can send to the Qemu Server
     fn to_json(&self) -> String;
-    fn parse_qemu_response(&self, response: &String) -> Result<Self, String> where Self: Sized;
+    fn parse_qemu_response(&self, response: &String) -> rustc_serialize::json::DecodeResult<T>
+        where T: rustc_serialize::Decodable;
 }
 
 fn connect_to_qemu() {

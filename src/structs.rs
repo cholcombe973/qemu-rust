@@ -32,7 +32,7 @@ pub struct ImageInfoSpecificVmdk {
     pub parent_cid: f64,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub struct ImageInfoSpecific {
     pub qcow2: String,
     pub vmdk: String,
@@ -347,7 +347,7 @@ pub struct BlockdevOptionsQuorum {
     pub vote_threshold: f64,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub struct BlockdevOptions {
     pub archipelago: String,
     pub blkdebug: String,
@@ -668,7 +668,7 @@ pub struct Abort {
 
             }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub struct TransactionAction {
     pub abort: String,
     pub blockdev_backup: String,
@@ -819,7 +819,7 @@ pub struct NetdevVhostUserOptions {
     pub chardev: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub struct NetClientOptions {
     pub bridge: String,
     pub dump: String,
@@ -863,7 +863,7 @@ pub struct UnixSocketAddress {
     pub path: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub struct SocketAddress {
     pub fd: String,
     pub inet: String,
@@ -906,7 +906,7 @@ pub struct TargetInfo {
     pub arch: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub struct KeyValue {
     pub number: f64,
     pub qcode: String,
@@ -977,7 +977,7 @@ pub struct ChardevDummy {
 
             }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub struct ChardevBackend {
     pub braille: String,
     pub console: String,
@@ -1011,7 +1011,7 @@ pub struct TPMPassthroughOptions {
     pub path: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub struct TpmTypeOptions {
     pub passthrough: String,
 }
@@ -1092,7 +1092,7 @@ pub struct InputMoveEvent {
     pub value: f64,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub struct InputEvent {
     pub abs: String,
     pub btn: String,
@@ -1100,7 +1100,7 @@ pub struct InputEvent {
     pub rel: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub struct NumaOptions {
     pub node: String,
 }
@@ -1135,7 +1135,7 @@ pub struct PCDIMMDeviceInfo {
     pub slot: f64,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub struct MemoryDeviceInfo {
     pub dimm: String,
 }

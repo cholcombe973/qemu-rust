@@ -1,5 +1,5 @@
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum BiosAtaTranslation {
     auto,
     none,
@@ -8,14 +8,14 @@ pub enum BiosAtaTranslation {
     rechs,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum BlockDeviceIoStatus {
     ok,
     failed,
     nospace,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum BlockdevOnError {
     report,
     ignore,
@@ -23,7 +23,7 @@ pub enum BlockdevOnError {
     stop,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum MirrorSyncMode {
     top,
     full,
@@ -31,7 +31,7 @@ pub enum MirrorSyncMode {
     dirty_bitmap,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum BlockJobType {
     commit,
     stream,
@@ -39,32 +39,32 @@ pub enum BlockJobType {
     backup,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum NewImageMode {
     existing,
     absolute_paths,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum BlockdevDiscardOptions {
     ignore,
     unmap,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum BlockdevDetectZeroesOptions {
     off,
     on,
     unmap,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum BlockdevAioOptions {
     threads,
     native,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum BlockdevDriver {
     archipelago,
     blkdebug,
@@ -96,7 +96,7 @@ pub enum BlockdevDriver {
     vvfat,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum Qcow2OverlapCheckMode {
     none,
     constant,
@@ -104,7 +104,7 @@ pub enum Qcow2OverlapCheckMode {
     all,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum BlkdebugEvent {
     l1_update,
     l1_grow_alloc_table,
@@ -151,20 +151,20 @@ pub enum BlkdebugEvent {
     empty_image_prepare,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum QuorumReadPattern {
     quorum,
     fifo,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum BlockErrorAction {
     ignore,
     report,
     stop,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum PreallocMode {
     off,
     metadata,
@@ -172,7 +172,7 @@ pub enum PreallocMode {
     full,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum ErrorClass {
     GenericError,
     CommandNotFound,
@@ -182,21 +182,21 @@ pub enum ErrorClass {
     KVMMissingCap,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum OnOffAuto {
     auto,
     on,
     off,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum TraceEventState {
     unavailable,
     disabled,
     enabled,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum LostTickPolicy {
     discard,
     delay,
@@ -204,7 +204,7 @@ pub enum LostTickPolicy {
     slew,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum RunState {
     debug,
     inmigrate,
@@ -223,13 +223,13 @@ pub enum RunState {
     guest_panicked,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum DataFormat {
     utf8,
     base64,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum MigrationStatus {
     none,
     setup,
@@ -240,7 +240,7 @@ pub enum MigrationStatus {
     failed,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum MigrationCapability {
     xbzrle,
     rdma_pin_all,
@@ -249,14 +249,14 @@ pub enum MigrationCapability {
     compress,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum MigrationParameter {
     compress_level,
     compress_threads,
     decompress_threads,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum NetworkAddressFamily {
     ipv4,
     ipv6,
@@ -264,7 +264,7 @@ pub enum NetworkAddressFamily {
     unknown,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum VncPrimaryAuth {
     none,
     vnc,
@@ -277,7 +277,7 @@ pub enum VncPrimaryAuth {
     sasl,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum VncVencryptSubAuth {
     plain,
     tls_none,
@@ -290,14 +290,14 @@ pub enum VncVencryptSubAuth {
     x509_sasl,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum SpiceQueryMouseMode {
     client,
     server,
     unknown,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum DumpGuestMemoryFormat {
     elf,
     kdump_zlib,
@@ -305,7 +305,7 @@ pub enum DumpGuestMemoryFormat {
     kdump_snappy,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum QKeyCode {
     unmapped,
     shift,
@@ -432,17 +432,17 @@ pub enum QKeyCode {
     pause,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum TpmModel {
     tpm_tis,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum TpmType {
     passthrough,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum CommandLineParameterType {
     string,
     boolean,
@@ -450,7 +450,7 @@ pub enum CommandLineParameterType {
     size,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum X86CPURegister32 {
     EAX,
     EBX,
@@ -462,14 +462,14 @@ pub enum X86CPURegister32 {
     EDI,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum RxState {
     normal,
     none,
     all,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum InputButton {
     Left,
     Middle,
@@ -478,13 +478,13 @@ pub enum InputButton {
     WheelDown,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum InputAxis {
     X,
     Y,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum HostMemPolicy {
     default,
     preferred,
@@ -492,12 +492,12 @@ pub enum HostMemPolicy {
     interleave,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum ACPISlotType {
     DIMM,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum WatchdogExpirationAction {
     reset,
     shutdown,
@@ -507,13 +507,13 @@ pub enum WatchdogExpirationAction {
     none,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum IoOperationType {
     read,
     write,
 }
 
-#[derive(Debug)]
+#[derive(Debug,RustcDecodable)]
 pub enum GuestPanicAction {
     pause,
 }
