@@ -1,6 +1,8 @@
 [package]
 name = "qemu-rust"
+description = "A library to interact with Qemu using the QMP protocol: http://wiki.qemu.org/QMP"
 version = "0.1.0"
+license = "MIT/Apache-2.0"
 authors = ["Chris Holcombe <xfactor973@gmail.com>"]
 build = "build.rs"
 
