@@ -18,7 +18,7 @@ pub mod enums;
 pub mod structs;
 pub mod events;
 
-trait QemuCmd<T> {
+pub trait QemuCmd<T> {
     // Return a json blob that we can send to the Qemu Server
     fn to_json(&self) -> String;
     fn parse_qemu_response(&self, response: &String) -> rustc_serialize::json::DecodeResult<T>

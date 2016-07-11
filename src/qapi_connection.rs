@@ -111,7 +111,10 @@ impl QemuCommands {
     }
 }
 
+/// The connection to the qemu QMP service.
+///
 pub struct QApiConnection {
+    /// The socket to connect on
     sock: TcpStream,
     buf: Option<ByteBuf>,
     mut_buf: Option<MutByteBuf>,
@@ -127,6 +130,8 @@ struct QemuEventHandler {
 
 
 impl QApiConnection {
+    /// Create a new connection to Qemu. On my localhost I usually start qemu in another
+    /// terminal like this: qemu-system-i386 -qmp tcp:localhost:4444,server,nowait
     pub fn new(sock: TcpStream) -> QApiConnection {
         QApiConnection {
             buf: None,
@@ -138,7 +143,7 @@ impl QApiConnection {
         }
     }
 
-    /// Run a Qemu command
+    /// Run a Qemu command and get a parsed json respose back
     pub fn run_command<E, T: rustc_serialize::Decodable>(&self, cmd: E) -> Result<T, String>
         where E: QemuCmd<T>
     {
