@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `commands` mod in crate `qemu_rust`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, commands">
+
+    <title>qemu_rust::commands - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='../index.html'>qemu_rust</a></p><script>window.sidebarCurrent = {name: 'commands', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content mod">
+<h1 class='fqn'><span class='in-band'>Module <a href='../index.html'>qemu_rust</a>::<wbr><a class='mod' href=''>commands</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a id='src-13' class='srclink' href='../../src/qemu_rust/src/commands.rs.html#1-3480' title='goto source code'>[src]</a></span></h1>
+<h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.add_client.html'
+                                  title='qemu_rust::commands::add_client'>add_client</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.add_fd.html'
+                                  title='qemu_rust::commands::add_fd'>add_fd</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.balloon.html'
+                                  title='qemu_rust::commands::balloon'>balloon</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.block_commit.html'
+                                  title='qemu_rust::commands::block_commit'>block_commit</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.block_dirty_bitmap_add.html'
+                                  title='qemu_rust::commands::block_dirty_bitmap_add'>block_dirty_bitmap_add</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.block_dirty_bitmap_clear.html'
+                                  title='qemu_rust::commands::block_dirty_bitmap_clear'>block_dirty_bitmap_clear</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.block_dirty_bitmap_remove.html'
+                                  title='qemu_rust::commands::block_dirty_bitmap_remove'>block_dirty_bitmap_remove</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.block_job_cancel.html'
+                                  title='qemu_rust::commands::block_job_cancel'>block_job_cancel</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.block_job_complete.html'
+                                  title='qemu_rust::commands::block_job_complete'>block_job_complete</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.block_job_pause.html'
+                                  title='qemu_rust::commands::block_job_pause'>block_job_pause</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.block_job_resume.html'
+                                  title='qemu_rust::commands::block_job_resume'>block_job_resume</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.block_job_set_speed.html'
+                                  title='qemu_rust::commands::block_job_set_speed'>block_job_set_speed</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.block_passwd.html'
+                                  title='qemu_rust::commands::block_passwd'>block_passwd</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.block_resize.html'
+                                  title='qemu_rust::commands::block_resize'>block_resize</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.block_set_io_throttle.html'
+                                  title='qemu_rust::commands::block_set_io_throttle'>block_set_io_throttle</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.block_set_write_threshold.html'
+                                  title='qemu_rust::commands::block_set_write_threshold'>block_set_write_threshold</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.block_stream.html'
+                                  title='qemu_rust::commands::block_stream'>block_stream</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.blockdev_add.html'
+                                  title='qemu_rust::commands::blockdev_add'>blockdev_add</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.blockdev_backup.html'
+                                  title='qemu_rust::commands::blockdev_backup'>blockdev_backup</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.blockdev_snapshot_delete_internal_sync.html'
+                                  title='qemu_rust::commands::blockdev_snapshot_delete_internal_sync'>blockdev_snapshot_delete_internal_sync</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.blockdev_snapshot_internal_sync.html'
+                                  title='qemu_rust::commands::blockdev_snapshot_internal_sync'>blockdev_snapshot_internal_sync</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.blockdev_snapshot_sync.html'
+                                  title='qemu_rust::commands::blockdev_snapshot_sync'>blockdev_snapshot_sync</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.change.html'
+                                  title='qemu_rust::commands::change'>change</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.change_backing_file.html'
+                                  title='qemu_rust::commands::change_backing_file'>change_backing_file</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.change_vnc_password.html'
+                                  title='qemu_rust::commands::change_vnc_password'>change_vnc_password</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.chardev_add.html'
+                                  title='qemu_rust::commands::chardev_add'>chardev_add</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.chardev_remove.html'
+                                  title='qemu_rust::commands::chardev_remove'>chardev_remove</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.closefd.html'
+                                  title='qemu_rust::commands::closefd'>closefd</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.cont.html'
+                                  title='qemu_rust::commands::cont'>cont</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.cpu.html'
+                                  title='qemu_rust::commands::cpu'>cpu</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.cpu_add.html'
+                                  title='qemu_rust::commands::cpu_add'>cpu_add</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.device_del.html'
+                                  title='qemu_rust::commands::device_del'>device_del</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.device_list_properties.html'
+                                  title='qemu_rust::commands::device_list_properties'>device_list_properties</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.drive_backup.html'
+                                  title='qemu_rust::commands::drive_backup'>drive_backup</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.drive_mirror.html'
+                                  title='qemu_rust::commands::drive_mirror'>drive_mirror</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.dump_guest_memory.html'
+                                  title='qemu_rust::commands::dump_guest_memory'>dump_guest_memory</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.eject.html'
+                                  title='qemu_rust::commands::eject'>eject</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.expire_password.html'
+                                  title='qemu_rust::commands::expire_password'>expire_password</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.getfd.html'
+                                  title='qemu_rust::commands::getfd'>getfd</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.human_monitor_command.html'
+                                  title='qemu_rust::commands::human_monitor_command'>human_monitor_command</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.inject_nmi.html'
+                                  title='qemu_rust::commands::inject_nmi'>inject_nmi</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.memsave.html'
+                                  title='qemu_rust::commands::memsave'>memsave</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.migrate.html'
+                                  title='qemu_rust::commands::migrate'>migrate</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.migrate_cancel.html'
+                                  title='qemu_rust::commands::migrate_cancel'>migrate_cancel</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.migrate_incoming.html'
+                                  title='qemu_rust::commands::migrate_incoming'>migrate_incoming</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.migrate_set_cache_size.html'
+                                  title='qemu_rust::commands::migrate_set_cache_size'>migrate_set_cache_size</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.migrate_set_capabilities.html'
+                                  title='qemu_rust::commands::migrate_set_capabilities'>migrate_set_capabilities</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.migrate_set_downtime.html'
+                                  title='qemu_rust::commands::migrate_set_downtime'>migrate_set_downtime</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.migrate_set_parameters.html'
+                                  title='qemu_rust::commands::migrate_set_parameters'>migrate_set_parameters</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.migrate_set_speed.html'
+                                  title='qemu_rust::commands::migrate_set_speed'>migrate_set_speed</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.nbd_server_add.html'
+                                  title='qemu_rust::commands::nbd_server_add'>nbd_server_add</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.nbd_server_start.html'
+                                  title='qemu_rust::commands::nbd_server_start'>nbd_server_start</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.nbd_server_stop.html'
+                                  title='qemu_rust::commands::nbd_server_stop'>nbd_server_stop</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.netdev_add.html'
+                                  title='qemu_rust::commands::netdev_add'>netdev_add</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.netdev_del.html'
+                                  title='qemu_rust::commands::netdev_del'>netdev_del</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.object_add.html'
+                                  title='qemu_rust::commands::object_add'>object_add</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.object_del.html'
+                                  title='qemu_rust::commands::object_del'>object_del</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.pmemsave.html'
+                                  title='qemu_rust::commands::pmemsave'>pmemsave</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.qom_list.html'
+                                  title='qemu_rust::commands::qom_list'>qom_list</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.qom_list_types.html'
+                                  title='qemu_rust::commands::qom_list_types'>qom_list_types</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.qom_set.html'
+                                  title='qemu_rust::commands::qom_set'>qom_set</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_acpi_ospm_status.html'
+                                  title='qemu_rust::commands::query_acpi_ospm_status'>query_acpi_ospm_status</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_balloon.html'
+                                  title='qemu_rust::commands::query_balloon'>query_balloon</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_block.html'
+                                  title='qemu_rust::commands::query_block'>query_block</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_block_jobs.html'
+                                  title='qemu_rust::commands::query_block_jobs'>query_block_jobs</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_blockstats.html'
+                                  title='qemu_rust::commands::query_blockstats'>query_blockstats</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_chardev.html'
+                                  title='qemu_rust::commands::query_chardev'>query_chardev</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_chardev_backends.html'
+                                  title='qemu_rust::commands::query_chardev_backends'>query_chardev_backends</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_command_line_options.html'
+                                  title='qemu_rust::commands::query_command_line_options'>query_command_line_options</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_commands.html'
+                                  title='qemu_rust::commands::query_commands'>query_commands</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_cpu_definitions.html'
+                                  title='qemu_rust::commands::query_cpu_definitions'>query_cpu_definitions</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_cpus.html'
+                                  title='qemu_rust::commands::query_cpus'>query_cpus</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_dump_guest_memory_capability.html'
+                                  title='qemu_rust::commands::query_dump_guest_memory_capability'>query_dump_guest_memory_capability</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_events.html'
+                                  title='qemu_rust::commands::query_events'>query_events</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_fdsets.html'
+                                  title='qemu_rust::commands::query_fdsets'>query_fdsets</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_iothreads.html'
+                                  title='qemu_rust::commands::query_iothreads'>query_iothreads</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_kvm.html'
+                                  title='qemu_rust::commands::query_kvm'>query_kvm</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_machines.html'
+                                  title='qemu_rust::commands::query_machines'>query_machines</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_memdev.html'
+                                  title='qemu_rust::commands::query_memdev'>query_memdev</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_memory_devices.html'
+                                  title='qemu_rust::commands::query_memory_devices'>query_memory_devices</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_mice.html'
+                                  title='qemu_rust::commands::query_mice'>query_mice</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_migrate.html'
+                                  title='qemu_rust::commands::query_migrate'>query_migrate</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_migrate_cache_size.html'
+                                  title='qemu_rust::commands::query_migrate_cache_size'>query_migrate_cache_size</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_migrate_capabilities.html'
+                                  title='qemu_rust::commands::query_migrate_capabilities'>query_migrate_capabilities</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_migrate_parameters.html'
+                                  title='qemu_rust::commands::query_migrate_parameters'>query_migrate_parameters</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_name.html'
+                                  title='qemu_rust::commands::query_name'>query_name</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_named_block_nodes.html'
+                                  title='qemu_rust::commands::query_named_block_nodes'>query_named_block_nodes</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_pci.html'
+                                  title='qemu_rust::commands::query_pci'>query_pci</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_rx_filter.html'
+                                  title='qemu_rust::commands::query_rx_filter'>query_rx_filter</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_spice.html'
+                                  title='qemu_rust::commands::query_spice'>query_spice</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_status.html'
+                                  title='qemu_rust::commands::query_status'>query_status</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_target.html'
+                                  title='qemu_rust::commands::query_target'>query_target</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_tpm.html'
+                                  title='qemu_rust::commands::query_tpm'>query_tpm</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_tpm_models.html'
+                                  title='qemu_rust::commands::query_tpm_models'>query_tpm_models</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_tpm_types.html'
+                                  title='qemu_rust::commands::query_tpm_types'>query_tpm_types</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_uuid.html'
+                                  title='qemu_rust::commands::query_uuid'>query_uuid</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_version.html'
+                                  title='qemu_rust::commands::query_version'>query_version</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_vnc.html'
+                                  title='qemu_rust::commands::query_vnc'>query_vnc</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.query_vnc_servers.html'
+                                  title='qemu_rust::commands::query_vnc_servers'>query_vnc_servers</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.quit.html'
+                                  title='qemu_rust::commands::quit'>quit</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.remove_fd.html'
+                                  title='qemu_rust::commands::remove_fd'>remove_fd</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.ringbuf_read.html'
+                                  title='qemu_rust::commands::ringbuf_read'>ringbuf_read</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.ringbuf_write.html'
+                                  title='qemu_rust::commands::ringbuf_write'>ringbuf_write</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.rtc_reset_reinjection.html'
+                                  title='qemu_rust::commands::rtc_reset_reinjection'>rtc_reset_reinjection</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.screendump.html'
+                                  title='qemu_rust::commands::screendump'>screendump</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.send_key.html'
+                                  title='qemu_rust::commands::send_key'>send_key</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.set_link.html'
+                                  title='qemu_rust::commands::set_link'>set_link</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.set_password.html'
+                                  title='qemu_rust::commands::set_password'>set_password</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.stop.html'
+                                  title='qemu_rust::commands::stop'>stop</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.system_powerdown.html'
+                                  title='qemu_rust::commands::system_powerdown'>system_powerdown</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.system_reset.html'
+                                  title='qemu_rust::commands::system_reset'>system_reset</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.system_wakeup.html'
+                                  title='qemu_rust::commands::system_wakeup'>system_wakeup</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.trace_event_get_state.html'
+                                  title='qemu_rust::commands::trace_event_get_state'>trace_event_get_state</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.trace_event_set_state.html'
+                                  title='qemu_rust::commands::trace_event_set_state'>trace_event_set_state</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.transaction.html'
+                                  title='qemu_rust::commands::transaction'>transaction</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.x_input_send_event.html'
+                                  title='qemu_rust::commands::x_input_send_event'>x_input_send_event</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.xen_save_devices_state.html'
+                                  title='qemu_rust::commands::xen_save_devices_state'>xen_save_devices_state</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class='struct' href='struct.xen_set_global_dirty_log.html'
+                                  title='qemu_rust::commands::xen_set_global_dirty_log'>xen_set_global_dirty_log</a></td>
+                           <td class='docblock short'>
+                                
+                           </td>
+                       </tr></table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "qemu_rust";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    
+    <script defer src="../../search-index.js"></script>
+</body>
+</html>

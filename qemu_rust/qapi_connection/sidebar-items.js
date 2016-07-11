@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["QApiConnection","The connection to the qemu QMP service."]]});
