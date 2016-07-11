@@ -5,6 +5,8 @@ version = "0.1.0"
 license = "MIT/Apache-2.0"
 authors = ["Chris Holcombe <xfactor973@gmail.com>"]
 build = "build.rs"
+repository = "https://github.com/cholcombe973/qemu-rust"
+documentation = "http://cholcombe973.github.io/qemu-rust"
 
 [build-dependencies]
 hyper = "~0.9"
