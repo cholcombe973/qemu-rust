@@ -25,7 +25,7 @@ script:
       travis-cargo --only stable doc
 
 after_success:
-  - test $TRAVIS_PULL_REQUEST == "false" && (test $TRAVIS_BRANCH == "travis" || test $TRAVIS_BRANCH == "master" ) && bash ./scripts/deploy-gh-pages.sh
+  - bash ./scripts/deploy-gh-pages.sh
   - travis-cargo coveralls --no-sudo --verify
 
 notifications:
