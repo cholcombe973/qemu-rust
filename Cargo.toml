@@ -12,7 +12,7 @@ documentation = "http://cholcombe973.github.io/qemu-rust"
 hyper = "~0.9"
 log = "~0.3"
 nom = "~1.2"
-parse_qapi = { path = "../parse_qapi" }
+parse_qapi = "~0.1"
 simple_logger = "~0.4"
 
 [dependencies]
