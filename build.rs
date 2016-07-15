@@ -7,13 +7,13 @@ extern crate simple_logger;
 use hyper::Client;
 use hyper::header::Connection;
 
-use std::fs::{OpenOptions};
+use std::fs::{File, OpenOptions};
 use std::io::prelude::*;
 use std::path::{PathBuf};
 
-fn write_docs(description: Vec<String>, f: &mut OpenOptions){
+fn write_docs(description: Vec<String>, f: &mut File){
   for d in description{
-    f.write(format!("{} \n", d.replace("#","///")).as_bytes());
+    f.write(format!("{} \n", d.replace("#","///").as_bytes()));
   }
 }
 fn write_sections_to_files(data: Vec<parse_qapi::Section>){
