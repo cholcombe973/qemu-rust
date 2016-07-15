@@ -15,6 +15,7 @@ fn write_docs(description: Vec<String>, f: &mut File){
   for d in description{
     let s = d.replace("#","///");
     f.write(s.as_bytes());
+    f.write(b"\n");
   }
 }
 fn write_sections_to_files(data: Vec<parse_qapi::Section>){
