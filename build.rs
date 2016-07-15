@@ -11,7 +11,7 @@ use std::fs::{OpenOptions};
 use std::io::prelude::*;
 use std::path::{PathBuf};
 
-fn write_docs(description: Vec<String>, f: &mut File){
+fn write_docs(description: Vec<String>, f: &mut OpenOptions){
   for d in description{
     f.write(format!("{} \n", d.replace("#","///")).as_bytes());
   }
@@ -40,30 +40,30 @@ fn write_sections_to_files(data: Vec<parse_qapi::Section>){
     for section in data{
         match section.qemu_type{
             parse_qapi::QemuType::Struct(st) => {
-                write_docs(section.description, &mut f);
+                write_docs(section.description, &mut structs);
                 structs.write(st.to_rust_string().as_bytes()).unwrap();
             },
             parse_qapi::QemuType::Command(c) => {
-                write_docs(section.description, &mut f);
+                write_docs(section.description, &mut commands);
                 //TODO: qom-get has a ** return value and I don't know what to do with that
                 if c.name != "qom-get"{
                     commands.write(c.to_rust_string().as_bytes()).unwrap();
                 }
             },
             parse_qapi::QemuType::Event(e) => {
-                write_docs(section.description, &mut f);
+                write_docs(section.description, &mut events);
                 events.write(e.to_rust_string().as_bytes()).unwrap();
             },
             parse_qapi::QemuType::Enum(e) => {
-                write_docs(section.description, &mut f);
+                write_docs(section.description, &mut enums);
                 enums.write(e.to_rust_string().as_bytes()).unwrap();
             },
             parse_qapi::QemuType::Include{name} => {
-                write_docs(section.description, &mut f);
+                write_docs(section.description, &mut commands);
                 commands.write(name.to_string().as_bytes()).unwrap();
             },
             parse_qapi::QemuType::Union(u) => {
-                write_docs(section.description, &mut f);
+                write_docs(section.description, &mut structs);
                 structs.write(u.to_rust_string().as_bytes()).unwrap();
             },
             parse_qapi::QemuType::Unknown => {},
