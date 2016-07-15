@@ -1,3 +1,6 @@
+//! A library to interface with Qemu.  For more information about Qemu see
+//! [qemu](http://www.qemu.org)
+//!
 extern crate bytes;
 #[macro_use]
 extern crate json;
@@ -18,11 +21,12 @@ pub mod enums;
 pub mod structs;
 pub mod events;
 
-pub trait QemuCmd<T> {
+pub trait QemuCmd {
     // Return a json blob that we can send to the Qemu Server
+
     fn to_json(&self) -> String;
-    fn parse_qemu_response(&self, response: &String) -> rustc_serialize::json::DecodeResult<T>
-        where T: rustc_serialize::Decodable;
+    // fn parse_qemu_response(&self, response: &String) -> rustc_serialize::json::DecodeResult<Self>
+    //    where Self: std::marker::Sized;
 }
 
 fn connect_to_qemu() {

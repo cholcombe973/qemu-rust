@@ -11,6 +11,7 @@ use mio::tcp::TcpStream;
 use QemuCmd;
 
 use std::io;
+use std::thread;
 
 #[derive(Debug,PartialEq,Eq)]
 enum ClientState {
@@ -142,23 +143,38 @@ impl QApiConnection {
             state: ClientState::ReadyForGreeting,
         }
     }
+    // pub fn run(&mut self) {
+    // const CLIENT: Token = Token(1);
+    // let mut event_loop = EventLoop::new().unwrap();
+    //
+    // Register the socket
+    // event_loop.register(&self.sock, CLIENT, EventSet::readable(), PollOpt::edge())
+    // .unwrap();
+    //
+    // Start handling events
+    // thread::spawn(move || {
+    // event_loop.run(self).unwrap();
+    // });
+    // }
+    //
 
-    /// Run a Qemu command and get a parsed json respose back
-    pub fn run_command<E, T: rustc_serialize::Decodable>(&self, cmd: E) -> Result<T, String>
-        where E: QemuCmd<T>
-    {
-        // Take anything from the commands.rs file  that implements QemuCmd and
-        // return whatever it returns by parsing the json response
-        let json_cmd = cmd.to_json();
-        if self.state == ClientState::Ready {
-            // Queue up this stuff and send it off
-            // Parse the response and send back to the user
-            let result = cmd.parse_qemu_response(&"".to_string()).unwrap();
-            Ok(result)
-        } else {
-            Err(format!("Invalid ClientState of {:?}", self.state))
-        }
-    }
+    /// Run a Qemu command and get a parsed json response back
+    // pub fn run_command<E, T: rustc_serialize::Decodable>(&self, cmd: E) -> Result<T, String>
+    // where E: QemuCmd
+    // {
+    // Take anything from the commands.rs file  that implements QemuCmd and
+    // return whatever it returns by parsing the json response
+    // let json_cmd = cmd.to_json();
+    // if self.state == ClientState::Ready {
+    // Queue up this stuff and send it off
+    // Parse the response and send back to the user
+    // let result = cmd.parse_qemu_response(&"".to_string()).unwrap();
+    // Ok(result)
+    // } else {
+    // Err(format!("Invalid ClientState of {:?}", self.state))
+    // }
+    // }
+    //
 
     fn parse_greeting<'a>(&self, bytes: &'a [u8]) {
         let result = json::parse(&String::from_utf8_lossy(bytes)).unwrap();

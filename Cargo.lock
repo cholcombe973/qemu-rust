@@ -8,7 +8,7 @@ dependencies = [
  "log 0.3.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "mio 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "nom 1.2.3 (registry+https://github.com/rust-lang/crates.io-index)",
- "parse_qapi 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "parse_qapi 0.1.1",
  "rustc-serialize 0.3.19 (registry+https://github.com/rust-lang/crates.io-index)",
  "simple_logger 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "slab 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -274,7 +274,6 @@ dependencies = [
 [[package]]
 name = "parse_qapi"
 version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "json 0.8.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "lazy_static 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",

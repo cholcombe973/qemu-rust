@@ -13,8 +13,9 @@ use std::path::{PathBuf};
 
 fn write_docs(description: Vec<String>, f: &mut File){
   for d in description{
-    let s = d.replace("#","///");
-    f.write(s.as_bytes());
+    //let s = d.replace("#","///");
+    f.write(b"///");
+    f.write(d.as_bytes());
     f.write(b"\n");
   }
 }
