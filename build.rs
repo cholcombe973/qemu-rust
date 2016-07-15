@@ -13,7 +13,8 @@ use std::path::{PathBuf};
 
 fn write_docs(description: Vec<String>, f: &mut File){
   for d in description{
-    f.write(format!("{} \n", d.replace("#","///").as_bytes()));
+    let s = d.replace("#","///");
+    f.write(s.as_bytes());
   }
 }
 fn write_sections_to_files(data: Vec<parse_qapi::Section>){
