@@ -39,12 +39,7 @@ fn connect_to_qemu() {
     // Setup the client socket
     let sock = TcpStream::connect(&addr).unwrap();
 
-    // Register the socket
-    event_loop.register(&sock, CLIENT, EventSet::readable(), PollOpt::edge())
-        .unwrap();
-
-    // Start handling events
-    event_loop.run(&mut qapi_connection::QApiConnection::new(sock)).unwrap();
+    let qemu_connection = qapi_connection::QApiConnection::new(sock);
 }
 
 fn main() {
