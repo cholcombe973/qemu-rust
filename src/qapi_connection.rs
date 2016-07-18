@@ -135,7 +135,7 @@ struct QemuEventHandler {
 impl QApiConnection {
     /// Create a new connection to Qemu. On my localhost I usually start qemu in another
     /// terminal like this: qemu-system-i386 -qmp tcp:localhost:4444,server,nowait
-    pub fn new(sock: TcpStream) -> QApiConnection {
+    pub fn new(sock: TcpStream) {
         const CLIENT: Token = Token(1);
 
         let mut event_loop = EventLoop::new().unwrap();
@@ -160,7 +160,7 @@ impl QApiConnection {
                     error!("Dispatcher: event loop failed, {:?}", e);
                 }
             });
-        return q;
+        // return q;
     }
 
     /// Run a Qemu command and get a parsed json response back
@@ -330,13 +330,6 @@ impl QApiConnection {
                               PollOpt::edge() | PollOpt::oneshot())
     }
 }
-// struct Dispatcher {}
-// impl Dispatcher {
-// fn new() -> Dispatcher {
-// Dispatcher {}
-// }
-// }
-//
 
 impl Handler for QApiConnection {
     type Timeout = ();
