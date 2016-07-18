@@ -135,21 +135,15 @@ struct QemuEventHandler {
 impl QApiConnection {
     /// Create a new connection to Qemu. On my localhost I usually start qemu in another
     /// terminal like this: qemu-system-i386 -qmp tcp:localhost:4444,server,nowait
-    pub fn new(&mut self, sock: TcpStream) -> QApiConnection {
+    pub fn new(sock: TcpStream) -> QApiConnection {
         const CLIENT: Token = Token(1);
 
         let mut event_loop = EventLoop::new().unwrap();
-        // Register the socket
-        event_loop.register(&mut self, CLIENT, EventSet::readable(), PollOpt::edge())
+        // Register interest in readable events
+        event_loop.register(&sock, CLIENT, EventSet::readable(), PollOpt::edge())
             .unwrap();
-        thread::Builder::new()
-            .name("Qemu Client".to_string())
-            .spawn(move || {
-                if let Err(e) = event_loop.run(&mut Dispatcher::new()) {
-                    error!("Dispatcher: event loop failed, {:?}", e);
-                }
-            });
-        QApiConnection {
+
+        let mut q = QApiConnection {
             buf: None,
             sock: sock,
             mut_buf: Some(ByteBuf::mut_with_capacity(4096)),
@@ -157,7 +151,16 @@ impl QApiConnection {
             interest: EventSet::none(),
             state: ClientState::ReadyForGreeting,
             tx: event_loop.channel(),
-        }
+        };
+
+        thread::Builder::new()
+            .name("Qemu Client".to_string())
+            .spawn(move || {
+                if let Err(e) = event_loop.run(&mut q) {
+                    error!("Dispatcher: event loop failed, {:?}", e);
+                }
+            });
+        return q;
     }
 
     /// Run a Qemu command and get a parsed json response back
@@ -327,29 +330,20 @@ impl QApiConnection {
                               PollOpt::edge() | PollOpt::oneshot())
     }
 }
-struct Dispatcher {}
-impl Dispatcher {
-    fn new() -> Dispatcher {
-        Dispatcher {}
-    }
-}
-impl Handler for Dispatcher {
+// struct Dispatcher {}
+// impl Dispatcher {
+// fn new() -> Dispatcher {
+// Dispatcher {}
+// }
+// }
+//
+
+impl Handler for QApiConnection {
     type Timeout = ();
     // type Message = QemuCmd;
     type Message = String;
 
     /// A message has been delivered
-    fn notify(&mut self, event_loop: &mut EventLoop<Self>, msg: String) {
-        println!("{:?}", msg);
-    }
-    fn timeout(&mut self, event_loop: &mut EventLoop<Self>, timeout: ()) {
-        println!("Timed out");
-    }
-}
-impl Handler for QApiConnection {
-    type Timeout = ();
-    // type Message = QemuCmd;
-    type Message = String;
     fn notify(&mut self, event_loop: &mut EventLoop<Self>, msg: Self::Message) {
         println!("notify");
     }

@@ -33,9 +33,6 @@ fn connect_to_qemu() {
     const CLIENT: Token = Token(1);
     let addr = "127.0.0.1:4444".parse().unwrap();
 
-    // Create an event loop
-    let mut event_loop = EventLoop::new().unwrap();
-
     // Setup the client socket
     let sock = TcpStream::connect(&addr).unwrap();
 
