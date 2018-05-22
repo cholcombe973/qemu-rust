@@ -10,6 +10,7 @@ use mio::*;
 use mio::tcp::TcpStream;
 use QemuCmd;
 
+use std::fmt::Debug;
 use std::io;
 use std::thread;
 
@@ -122,6 +123,7 @@ pub struct QApiConnection {
     token: Token,
     interest: EventSet,
     state: ClientState,
+    tx: mio::Sender<String>,
 }
 
 struct QemuEventHandler {
@@ -133,30 +135,33 @@ struct QemuEventHandler {
 impl QApiConnection {
     /// Create a new connection to Qemu. On my localhost I usually start qemu in another
     /// terminal like this: qemu-system-i386 -qmp tcp:localhost:4444,server,nowait
-    pub fn new(sock: TcpStream) -> QApiConnection {
-        QApiConnection {
+    pub fn new(sock: TcpStream) {
+        const CLIENT: Token = Token(1);
+
+        let mut event_loop = EventLoop::new().unwrap();
+        // Register interest in readable events
+        event_loop.register(&sock, CLIENT, EventSet::readable(), PollOpt::edge())
+            .unwrap();
+
+        let mut q = QApiConnection {
             buf: None,
             sock: sock,
             mut_buf: Some(ByteBuf::mut_with_capacity(4096)),
             token: Token(1),
             interest: EventSet::none(),
             state: ClientState::ReadyForGreeting,
-        }
+            tx: event_loop.channel(),
+        };
+
+        thread::Builder::new()
+            .name("Qemu Client".to_string())
+            .spawn(move || {
+                if let Err(e) = event_loop.run(&mut q) {
+                    error!("Dispatcher: event loop failed, {:?}", e);
+                }
+            });
+        // return q;
     }
-    // pub fn run(&mut self) {
-    // const CLIENT: Token = Token(1);
-    // let mut event_loop = EventLoop::new().unwrap();
-    //
-    // Register the socket
-    // event_loop.register(&self.sock, CLIENT, EventSet::readable(), PollOpt::edge())
-    // .unwrap();
-    //
-    // Start handling events
-    // thread::spawn(move || {
-    // event_loop.run(self).unwrap();
-    // });
-    // }
-    //
 
     /// Run a Qemu command and get a parsed json response back
     // pub fn run_command<E, T: rustc_serialize::Decodable>(&self, cmd: E) -> Result<T, String>
@@ -328,8 +333,22 @@ impl QApiConnection {
 
 impl Handler for QApiConnection {
     type Timeout = ();
-    type Message = ();
+    // type Message = QemuCmd;
+    type Message = String;
 
+    /// A message has been delivered
+    fn notify(&mut self, event_loop: &mut EventLoop<Self>, msg: Self::Message) {
+        println!("notify");
+    }
+    fn timeout(&mut self, event_loop: &mut EventLoop<Self>, timeout: Self::Timeout) {
+        println!("timeout");
+    }
+    fn interrupted(&mut self, event_loop: &mut EventLoop<Self>) {
+        println!("interrupted");
+    }
+    fn tick(&mut self, event_loop: &mut EventLoop<Self>) {
+        println!("tick");
+    }
     fn ready(&mut self,
              event_loop: &mut EventLoop<QApiConnection>,
              token: Token,
